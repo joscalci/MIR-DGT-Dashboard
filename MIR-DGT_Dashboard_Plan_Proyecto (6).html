@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIR-DGT · Dashboard Gobernanza del Dato</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f9;--w:#fff;--brd:#e2e6f3;--brd2:#c8cedf;
+  --ok:#059669;--okl:#ecfdf5;--ko:#dc2626;--kol:#fef2f2;
+  --na:#94a3b8;--nal:#f1f5f9;
+  --a:#2563eb;--al:#eff6ff;--a2:#7c3aed;--a3:#0891b2;
+  --tx:#0d1321;--t2:#374151;--t3:#9ca3af;
+  --sh:0 1px 4px rgba(13,19,33,.06),0 4px 20px rgba(13,19,33,.07);
+  --sh2:0 8px 40px rgba(13,19,33,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+.page{max-width:1280px;margin:0 auto;padding:44px 32px 80px;}
+
+/* HEADER */
+.hdr{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;margin-bottom:36px;}
+.eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.chip{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:var(--al);color:var(--a);border:1px solid #bfdbfe;}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.ltxt{font-size:11px;color:var(--ok);font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:40px;font-weight:900;line-height:1.05;letter-spacing:-.025em;}
+h1 em{font-style:italic;color:var(--a);}
+.hsub{font-size:13px;color:var(--t3);margin-top:8px;line-height:1.6;}
+.hright{text-align:right;padding-top:4px;}
+.hdate{font-family:'Fraunces',serif;font-size:20px;font-weight:700;}
+.hpill{font-size:10px;color:var(--t3);background:var(--brd);border:1px solid var(--brd2);padding:3px 10px;border-radius:8px;display:inline-block;margin-top:6px;}
+.topbtns{display:flex;gap:8px;justify-content:flex-end;margin-bottom:20px;}
+.btn{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;}
+.btnp{background:var(--a);color:#fff;}.btnp:hover{background:#1d4ed8;}
+.btnr{background:var(--brd);color:var(--t2);}.btnr:hover{background:var(--brd2);}
+.btnx{background:var(--ko);color:#fff;display:none;}.btnx:hover{background:#b91c1c;}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi{background:var(--w);border:1px solid var(--brd);border-radius:20px;padding:20px 18px 16px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .18s,box-shadow .2s;}
+.kpi:hover{transform:translateY(-3px);box-shadow:var(--sh2);}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;}
+.kt::before{background:linear-gradient(90deg,var(--a),var(--a2));}
+.ko2::before{background:var(--ok);}
+.kk::before{background:var(--ko);}
+.kn::before{background:var(--na);}
+.kh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.kl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);}
+.ki{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.kt .ki{background:var(--al);}
+.ko2 .ki{background:var(--okl);}
+.kk .ki{background:var(--kol);}
+.kn .ki{background:var(--nal);}
+.kv{font-family:'Fraunces',serif;font-size:48px;font-weight:900;line-height:1;letter-spacing:-.04em;}
+.kt .kv{background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ko2 .kv{color:var(--ok);}
+.kk .kv{color:var(--ko);}
+.kn .kv{color:var(--na);}
+.ks{font-size:11px;color:var(--t3);margin-top:4px;}
+
+/* CARD */
+.card{background:var(--w);border:1px solid var(--brd);border-radius:18px;padding:22px;box-shadow:var(--sh);}
+.ct{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+
+/* PROGRESS */
+.pnum{font-family:'Fraunces',serif;font-size:60px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--ok),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.psub{font-size:12px;color:var(--t3);margin-top:4px;margin-bottom:16px;}
+.track{height:12px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;gap:2px;margin-bottom:14px;}
+.tok{background:var(--ok);height:100%;border-radius:12px 0 0 12px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.tko{background:var(--ko);height:100%;transition:width 1.2s;}
+.tna{background:#cbd5e1;height:100%;border-radius:0 12px 12px 0;transition:width 1.2s;}
+.legs{display:flex;flex-direction:column;gap:7px;}
+.leg{display:flex;align-items:center;gap:8px;}
+.ld{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
+.ll{font-size:12px;color:var(--t2);flex:1;}
+.ln{font-size:12px;font-weight:700;}
+
+/* DONUT */
+.dc2{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.dw{position:relative;width:140px;height:140px;margin:4px 0 12px;}
+.dctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+.dpct{font-family:'Fraunces',serif;font-size:26px;font-weight:900;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.dlbl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);}
+.dleg{display:flex;gap:12px;}
+.dl{text-align:center;}
+.dld{width:7px;height:7px;border-radius:50%;margin:0 auto 3px;}
+.dlv{font-family:'Fraunces',serif;font-size:15px;font-weight:700;}
+.dll{font-size:9px;color:var(--t3);text-transform:uppercase;}
+
+/* GAUGE */
+.gc{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.gval{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--ok);text-align:center;margin-top:4px;}
+.gsub{font-size:11px;color:var(--t3);text-align:center;margin-top:2px;}
+
+/* ROAD */
+.sec{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin:28px 0 14px;display:flex;align-items:center;gap:10px;}
+.sec span{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:400;color:var(--t3);}
+.road-wrap{background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%);border-radius:20px;padding:28px 20px;position:relative;overflow:hidden;box-shadow:var(--sh2);}
+.road-itself{background:linear-gradient(180deg,#2d3748,#374151);border-radius:12px;padding:18px 12px;margin:8px 0;position:relative;}
+.road-lines{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:4px;background:repeating-linear-gradient(90deg,#f6c90e 0,#f6c90e 30px,transparent 30px,transparent 60px);opacity:.7;animation:roadmove 2s linear infinite;}
+@keyframes roadmove{from{background-position:0 0}to{background-position:60px 0}}
+.road-ms{display:flex;align-items:center;position:relative;z-index:2;}
+.ms{display:flex;flex-direction:column;align-items:center;flex:1;cursor:pointer;}
+.ms:hover .msign{transform:scale(1.1);}
+.msign{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;transition:all .2s;position:relative;flex-shrink:0;}
+.msign.ok{background:var(--ok);color:#fff;box-shadow:0 0 14px rgba(5,150,105,.6);}
+.msign.ko{background:var(--ko);color:#fff;box-shadow:0 0 14px rgba(220,38,38,.5);}
+.msign.na{background:#4b5563;color:#9ca3af;}
+.msign.ok::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(5,150,105,.4);animation:rp 2s infinite;}
+@keyframes rp{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:0}}
+.mcode{font-size:9px;font-weight:800;margin-top:5px;color:#e5e7eb;letter-spacing:.08em;}
+.mname{font-size:7px;color:#9ca3af;margin-top:2px;text-align:center;max-width:56px;line-height:1.3;}
+.rconn{flex:1;height:3px;background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(255,255,255,.2),rgba(255,255,255,.1));margin-bottom:26px;position:relative;}
+.rconn.ok-c{background:linear-gradient(90deg,var(--ok),rgba(5,150,105,.3));}
+.rtt{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(15,18,40,.95);color:#fff;border-radius:10px;padding:8px 12px;font-size:11px;line-height:1.5;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:10;border:1px solid rgba(255,255,255,.1);}
+.ms:hover .rtt{opacity:1;}
+.rleg2{display:flex;gap:14px;margin-top:14px;justify-content:center;}
+.rl2{display:flex;align-items:center;gap:6px;font-size:11px;color:#9ca3af;}
+.rld{width:7px;height:7px;border-radius:50%;}
+
+/* DATASETS */
+.ds-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}
+.dsc{background:var(--w);border:1px solid var(--brd);border-radius:18px;padding:18px 20px;box-shadow:var(--sh);transition:transform .18s,box-shadow .2s;}
+.dsc:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.dsh{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.dsi{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.dsn{font-size:13px;font-weight:700;color:var(--tx);}
+.dsid{font-size:10px;color:var(--t3);margin-top:1px;}
+.dsfed{font-size:10px;font-weight:700;color:var(--ok);background:var(--okl);padding:2px 8px;border-radius:20px;margin-left:auto;flex-shrink:0;}
+.pipe{display:flex;align-items:flex-start;}
+.ps{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.ps:not(:last-child)::after{content:'';position:absolute;top:12px;left:50%;width:100%;height:2px;background:var(--ok);z-index:0;}
+.pd{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;position:relative;z-index:1;background:var(--ok);color:#fff;}
+.pl{font-size:8px;font-weight:600;color:var(--t3);margin-top:4px;text-align:center;line-height:1.3;max-width:44px;}
+
+/* RADAR */
+.radar-row{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start;}
+.rli{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px;color:var(--t2);}
+.rline{width:20px;height:3px;border-radius:2px;flex-shrink:0;}
+.mad-items{margin-top:14px;display:flex;flex-direction:column;gap:5px;}
+.mi{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;transition:background .15s;}
+.mi:hover{background:var(--al);}
+.mc2{font-size:9px;font-weight:800;color:var(--a);background:var(--al);padding:1px 6px;border-radius:4px;min-width:52px;text-align:center;}
+.mn2{font-size:11px;color:var(--t2);flex:1;}
+.nb{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;}
+.ni{background:var(--kol);color:var(--ko);}
+.nf{background:var(--okl);color:var(--ok);}
+
+/* BAR */
+.bars-wrap{display:flex;align-items:flex-end;gap:6px;height:100px;padding-bottom:22px;border-bottom:1px solid var(--brd);margin-top:14px;}
+.bc{display:flex;flex-direction:column;align-items:center;flex:1;}
+.bs{display:flex;flex-direction:column-reverse;width:100%;gap:1px;border-radius:6px 6px 0 0;overflow:hidden;}
+.bok2{background:var(--ok);}
+.bko2{background:var(--ko);}
+.bna2{background:#cbd5e1;}
+.bl{font-size:8px;font-weight:700;color:var(--t3);margin-top:5px;letter-spacing:.04em;}
+.bn{font-size:9px;font-weight:700;color:var(--t2);margin-top:1px;}
+
+/* ACCORDION */
+.acc{display:flex;flex-direction:column;gap:6px;}
+.ai{background:var(--w);border:1px solid var(--brd);border-radius:14px;overflow:hidden;box-shadow:var(--sh);transition:border-color .2s,box-shadow .2s;}
+.ai:hover{border-color:var(--brd2);}
+.ai.open{border-color:var(--a);box-shadow:0 0 0 3px rgba(37,99,235,.06),var(--sh);}
+.at{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;user-select:none;transition:background .15s;}
+.at:hover{background:var(--bg);}
+.ac{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--a);background:var(--al);border:1px solid #bfdbfe;padding:2px 7px;border-radius:6px;white-space:nowrap;flex-shrink:0;}
+.an{font-size:13px;font-weight:600;color:var(--tx);flex:1;}
+.apills{display:flex;gap:4px;flex-shrink:0;}
+.pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.pok{background:var(--okl);color:var(--ok);}
+.pko{background:var(--kol);color:var(--ko);}
+.pna{background:var(--nal);color:var(--na);}
+.amini{width:44px;height:4px;background:var(--bg);border-radius:4px;overflow:hidden;display:flex;gap:1px;flex-shrink:0;}
+.mok{background:var(--ok);height:100%;}
+.mko{background:var(--ko);height:100%;}
+.mna{background:#cbd5e1;height:100%;}
+.achev{font-size:8px;color:var(--t3);transition:transform .25s;flex-shrink:0;}
+.ai.open .achev{transform:rotate(180deg);}
+.ab{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1);}
+.ai.open .ab{max-height:5000px;}
+.pb2{padding:14px 18px;background:linear-gradient(135deg,#f8faff,#f0f4ff);border-top:1px solid var(--brd);}
+.pbt{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--a);margin-bottom:5px;}
+.pbtx{font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:8px;}
+.pbsv{display:flex;gap:4px;flex-wrap:wrap;}
+.sv{font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--al);color:var(--a);border:1px solid #bfdbfe;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:8px 12px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);background:var(--bg);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);}
+tbody tr{border-bottom:1px solid var(--brd);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:#f8fafd;}
+tbody tr.done{opacity:.55;}
+tbody tr.done .act{text-decoration:line-through;color:var(--t3);}
+tbody td{padding:9px 12px;font-size:12px;color:var(--t2);vertical-align:middle;}
+.act{color:var(--tx);font-weight:500;}
+.ent{font-size:11px;color:var(--t3);max-width:260px;line-height:1.6;}
+.ent-file{display:block;padding:1px 0;}
+.svc{font-size:9px;font-weight:700;color:var(--a);background:var(--al);padding:1px 5px;border-radius:4px;white-space:nowrap;}
+.bdg{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.bok3{background:var(--okl);color:var(--ok);}
+.bko3{background:var(--kol);color:var(--ko);}
+.bna3{background:var(--nal);color:var(--na);}
+.chk{width:18px;height:18px;border-radius:5px;border:2px solid var(--brd2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff;flex-shrink:0;}
+.chk:hover{border-color:var(--ok);}
+.chk.on{background:var(--ok);border-color:var(--ok);}
+.chk.on::after{content:'✓';color:#fff;font-size:11px;font-weight:800;}
+.chk.dis{background:var(--nal);border-color:var(--brd);cursor:default;}
+.chk.dis::after{content:'—';color:var(--na);font-size:10px;}
+.lnk{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:var(--al);color:var(--a);font-size:10px;text-decoration:none;transition:background .15s;}
+.lnk:hover{background:#bfdbfe;}
+.nolnk{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:var(--brd);color:var(--t3);font-size:10px;}
+footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center;}
+.fl{font-size:11px;color:var(--t3);line-height:1.7;}
+.fl strong{color:var(--t2);}
+.fr{font-size:10px;color:var(--t3);text-align:right;line-height:1.7;}
+body.pres .page{max-width:100%;padding:32px 48px;}
+body.pres .hide{display:none!important;}
+@media(max-width:900px){.kpis,.g3,.ds-grid,.radar-row{grid-template-columns:1fr;}h1{font-size:28px;}}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="topbtns">
+  <button class="btn btnr" onclick="resetAll()">↺ Resetear</button>
+  <button class="btn btnp" onclick="togglePres(true)">⛶ Presentación</button>
+  <button class="btn btnx" id="btnX" onclick="togglePres(false)">✕ Salir</button>
+</div>
+
+<div class="hdr">
+  <div>
+    <div class="eyebrow">
+      <div class="chip">PRTR · Impulsa Data · GDDP</div>
+      <div class="ldot"></div><span class="ltxt">En curso · Cierre junio 2026</span>
+    </div>
+    <h1>MIR–<em>DGT</em><br>Gobernanza del Dato</h1>
+    <div class="hsub">Plan de proyecto B0–B10 · 4 datasets federados en datos.gob.es · Grado Operativo MGMD<br>RGPD · NTI-RISP · DCAT-AP-ES · ISO/IEC 27559 · Marco Técnico Global (DGDATO)</div>
+  </div>
+  <div class="hright">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:4px">Actualizado</div>
+    <div class="hdate" id="fhoy"></div>
+    <div class="hpill">DGDATO · Marco Técnico Global</div>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi kt"><div class="kh"><div class="kl">Total actividades</div><div class="ki">📋</div></div><div class="kv" id="kTot">—</div><div class="ks">en 10 bloques</div></div>
+  <div class="kpi ko2"><div class="kh"><div class="kl">Completadas</div><div class="ki">✅</div></div><div class="kv" id="kOk">—</div><div class="ks">estado OK</div></div>
+  <div class="kpi kk"><div class="kh"><div class="kl">Pendientes</div><div class="ki">⚠️</div></div><div class="kv" id="kKo">—</div><div class="ks">requieren acción</div></div>
+  <div class="kpi kn"><div class="kh"><div class="kl">No aplica</div><div class="ki">◌</div></div><div class="kv" id="kNa">—</div><div class="ks">fuera de alcance</div></div>
+</div>
+
+<div class="g3">
+  <div class="card">
+    <div class="ct">Progreso global</div>
+    <div class="pnum" id="pPct">—%</div>
+    <div class="psub">actividades completadas</div>
+    <div class="track"><div class="tok" id="bOk" style="width:0%"></div><div class="tko" id="bKo" style="width:0%"></div><div class="tna" id="bNa" style="width:0%"></div></div>
+    <div class="legs">
+      <div class="leg"><div class="ld" style="background:var(--ok)"></div><div class="ll">Completadas (OK)</div><div class="ln" style="color:var(--ok)" id="lOk">—</div></div>
+      <div class="leg"><div class="ld" style="background:var(--ko)"></div><div class="ll">Pendientes (KO)</div><div class="ln" style="color:var(--ko)" id="lKo">—</div></div>
+      <div class="leg"><div class="ld" style="background:#cbd5e1"></div><div class="ll">No aplica (N/A)</div><div class="ln" style="color:var(--na)" id="lNa">—</div></div>
+    </div>
+  </div>
+  <div class="card dc2">
+    <div class="ct" style="text-align:center;width:100%">Distribución</div>
+    <div class="dw"><canvas id="donut" width="140" height="140"></canvas>
+      <div class="dctr"><div class="dpct" id="dPct">—%</div><div class="dlbl">completado</div></div>
+    </div>
+    <div class="dleg">
+      <div class="dl"><div class="dld" style="background:var(--ok)"></div><div class="dlv" style="color:var(--ok)" id="dOk">—</div><div class="dll">OK</div></div>
+      <div class="dl"><div class="dld" style="background:var(--ko)"></div><div class="dlv" style="color:var(--ko)" id="dKo">—</div><div class="dll">KO</div></div>
+      <div class="dl"><div class="dld" style="background:#cbd5e1"></div><div class="dlv" style="color:var(--na)" id="dNa">—</div><div class="dll">N/A</div></div>
+    </div>
+  </div>
+  <div class="card gc">
+    <div class="ct" style="text-align:center;width:100%">Índice de cierre</div>
+    <div style="position:relative;width:180px;height:100px;margin:0 auto 8px"><canvas id="gauge" width="180" height="100"></canvas></div>
+    <div class="gval" id="gVal">—%</div>
+    <div class="gsub">sobre actividades aplicables</div>
+  </div>
+</div>
+
+<!-- ROAD -->
+<div class="sec">Recorrido del proyecto <span>· Hover para ver detalle · Clic para ir al bloque</span></div>
+<div class="road-wrap">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:0 4px;">
+    <svg width="32" height="20" viewBox="0 0 32 20"><rect x="2" y="6" width="28" height="10" rx="5" fill="#dc2626"/><rect x="0" y="8" width="32" height="6" rx="3" fill="#ef4444"/><circle cx="8" cy="16" r="4" fill="#1f2937"/><circle cx="8" cy="16" r="2" fill="#6b7280"/><circle cx="24" cy="16" r="4" fill="#1f2937"/><circle cx="24" cy="16" r="2" fill="#6b7280"/><rect x="12" y="3" width="8" height="6" rx="2" fill="#bfdbfe" opacity=".8"/></svg>
+    <span style="font-size:12px;color:#e5e7eb;font-weight:600;">Pipeline MIR-DGT · De Kick-off a Federación en datos.gob.es</span>
+  </div>
+  <div class="road-itself">
+    <div class="road-lines"></div>
+    <div class="road-ms" id="roadMs"></div>
+  </div>
+  <div class="rleg2">
+    <div class="rl2"><div class="rld" style="background:var(--ok)"></div>Completado</div>
+    <div class="rl2"><div class="rld" style="background:var(--ko)"></div>Pendiente</div>
+    <div class="rl2"><div class="rld" style="background:#4b5563"></div>No aplica</div>
+  </div>
+</div>
+
+<!-- DATASETS -->
+<div class="sec" style="margin-top:28px;">Datasets publicados <span>· Pipeline completo · datos.gob.es</span></div>
+<div class="ds-grid" id="dsGrid"></div>
+
+<!-- RADAR -->
+<div class="sec" style="margin-top:28px;">Madurez del dato <span>· AS-IS → TO-BE · Grado Operativo MGMD · Hover sobre los puntos</span></div>
+<div class="card" style="margin-bottom:14px;">
+  <div class="ct">10 procesos evaluados · NC0–NC3 · <span style="color:var(--a)">●</span> AS-IS · <span style="color:var(--na)">●</span> TO-BE · <span style="color:#ec4899">●</span> NC3 alcanzado</div>
+  <div class="radar-row">
+    <canvas id="radar" width="340" height="300"></canvas>
+    <div>
+      <div class="rli"><div class="rline" style="background:var(--a)"></div>Evaluación AS-IS (inicio del proyecto)</div>
+      <div class="rli"><div class="rline" style="background:var(--na);opacity:.6"></div>Grado Operativo TO-BE (objetivo)</div>
+      <div class="mad-items" id="madItems"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BAR -->
+<div class="card" style="margin-bottom:14px;">
+  <div class="ct">Actividades por bloque</div>
+  <div id="barChartWrap" style="position:relative;width:100%;"><canvas id="barChart" height="80" style="width:100%;display:block;"></canvas></div>
+  <div style="display:flex;gap:14px;margin-top:10px;">
+    <div class="leg"><div class="ld" style="background:var(--ok)"></div><div class="ll" style="font-size:11px">OK</div></div>
+    <div class="leg"><div class="ld" style="background:var(--ko)"></div><div class="ll" style="font-size:11px">KO</div></div>
+    <div class="leg"><div class="ld" style="background:#cbd5e1"></div><div class="ll" style="font-size:11px">N/A</div></div>
+  </div>
+</div>
+
+<!-- ACCORDION -->
+<div class="sec" style="margin-top:28px;">Detalle por bloque <span>↓ Clic para expandir · ✓ Marca actividades completadas</span></div>
+<div class="acc" id="acc"></div>
+
+<footer>
+  <div class="fl"><strong>Impulsa Data / GDDP PRTR · MIR-DGT</strong><br>Ministerio del Interior · Dirección General de Tráfico</div>
+  <div class="fr">RGPD · LO 3/2018 · Ley 37/2007<br>Marco Técnico Global (DGDATO)</div>
+</footer>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// DATA — Entregables reales del SharePoint MIR-DGT
+// Para añadir links: lnk:"https://tu-url-sharepoint"
+// ════════════════════════════════════════════════
+const DATA=[
+  // B0
+  {b:"B0",n:"Kick-off",a:"0.0. Actividades iniciales y reunión de Kick-off",e:[{n:"MIR-DGT.PP-Presentación Kick Off.pptx",u:""}],svc:"",s:"N/A"},
+  // B1
+  {b:"B1",n:"Análisis AS IS",a:"1.0. Revisión y validación del escenario propuesto de arquitecturas",e:[
+    {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.0%20Arquitectura/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx.url?csf=1&web=1&e=opuaHT"},
+    {n:"MIR-DGT.IN-Cuestionario Arquitectura Software.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.0%20Arquitectura/MIR-DGT.IN-Cuestionario%20Arquitectura%20Software.xlsx?d=wfcee8c8758b84356aa84b0ecce05f7ac&csf=1&web=1&e=RydoPA"},
+  ],svc:"S13",s:"OK"},
+  {b:"B1",n:"Análisis AS IS",a:"1.1. Identificación y gestión de riesgos del proyecto",e:[
+    {n:"MIR-DGT.IN-Gestión Riesgos Registro_PTR.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.1%20Riesgos/MIR-DGT.IN-Gesti%C3%B3n%20Riesgos%20Registro_PTR.docx?d=w08262ad01ea5493bbef09b614114b716&csf=1&web=1&e=3u9Vwc"},
+    {n:"MIR-DGT.NM-Registro riesgos.pptx",u:"https://colaboraage.sharepoint.com/:p:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.1%20Riesgos/MIR-DGT.NM-Registro%20riesgos.pptx?d=w801a8ecedc074bfe9ef37e4c3ec1d04c&csf=1&web=1&e=v3fUnU"},
+    {n:"MIR-DGT.NM-Registro Riesgos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.1%20Riesgos/MIR-DGT.NM-Registro%20Riesgos.xlsx?d=w8656cd6586d048779bc54dd4fc462bd3&csf=1&web=1&e=Lh44KC"},
+  ],svc:"",s:"OK"},
+  {b:"B1",n:"Análisis AS IS",a:"1.2. Identificar conjuntos de datos existentes en las UNs del alcance",e:[
+    {n:"MIR-DGT.IN-Inventario Conjuntos datos.xlsx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.2%20DataSet/MIR-DGT.IN-Inventario%20Conjuntos%20datos.xlsx.url?csf=1&web=1&e=0DiMGs"},
+  ],svc:"",s:"OK"},
+  {b:"B1",n:"Análisis AS IS",a:"1.3. Seleccionar y analizar los conjuntos de datos de interés",e:[
+    {n:"MIR-DGT.IN.Inventario Conjunto de datos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.3%20An%C3%A1lisis%20DataSet%20de%20inter%C3%A9s/MIR-DGT.IN.Inventario%20Conjunto%20de%20datos.xlsx?d=w1be3d1da331940688260ae30cc24d9b8&csf=1&web=1&e=e7zEEg"},
+    {n:"MIR-DGT.IN-Valoracion DS DGT.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.3%20An%C3%A1lisis%20DataSet%20de%20inter%C3%A9s/MIR-DGT.IN-Valoracion%20DS%20DGT.xlsx?d=wf5124fd5f77d46a3985c436607d1268d&csf=1&web=1&e=nxFs18"},
+  ],svc:"",s:"OK"},
+  {b:"B1",n:"Análisis AS IS",a:"1.4. Analizar la gobernanza y gestión de los datos seleccionados",e:[
+    {n:"MIR-DGT_ConjuntoDatos.pbix",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.4%20Gesti%C3%B3n%20DataSet/MIR-DGT_ConjuntoDatos.pbix?csf=1&web=1&e=o5HsOK"},
+  ],svc:"S01",s:"N/A"},
+  {b:"B1",n:"Análisis AS IS",a:"1.5. Evaluar Madurez Inicial en gobierno, gestión y calidad del dato",e:[
+    {n:"MIR-DGT.FP-Herramienta Evaluación As-Is_To-Be.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.5%20AS%20IS/MIR-DGT.FP-Herramienta%20Evaluaci%C3%B3n%20As-Is_To-Be.xlsx?d=w48d92386b95646688906fa2beb4cad86&csf=1&web=1&e=6Y9Tg9"},
+    {n:"MIR-DGT.PT-Informe Evaluación As-Is_To-be.pptx",u:"https://colaboraage.sharepoint.com/:p:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.5%20AS%20IS/MIR-DGT.PT-Informe%20Evaluaci%C3%B3n%20As-Is_To-be.pptx?d=w6d2a161e4c1648c89a026e0f1adaad4b&csf=1&web=1&e=g2TaSO"},
+  ],svc:"S01",s:"OK"},
+  {b:"B1",n:"Análisis AS IS",a:"1.6. Análisis Benchmarking oficinas homólogas a nivel mundial",e:[{n:"NA",u:""}],svc:"",s:"N/A"},
+  // B2
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.0. Definir estrategias del dato y planes de acción",e:[
+    {n:"MIR-DGT.IN-Informe implementación estrategia.docx",u:""},
+    {n:"MIR-DGT.IN-Estrategia Dato.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.0%20Estrategias/MIR-DGT.IN-Estrategia%20Dato.xlsx?d=w68423abc404c4df087002820d60c2fcf&csf=1&web=1&e=zCYHwY"},
+  ],svc:"S02",s:"OK"},
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.1. Diseñar el modelo de gobernanza sobre los conjuntos de datos",e:[
+    {n:"MIR-DGT.IN-Apoyo Identificación Estructura Gobierno-RACI.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.1%20Gobierno%20DataSet/MIR-DGT.IN-Apoyo%20Identificaci%C3%B3n%20Estructura%20Gobierno-RACI.xlsx?d=w1e4bf37fdb4140f5bfc1c158559c04a0&csf=1&web=1&e=qcfIj0"},
+    {n:"MIR-DGT.IN-Informe Implantación Gobierno Dato.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.1%20Gobierno%20DataSet/MIR-DGT.IN-Informe%20Implantaci%C3%B3n%20Gobierno%20Dato.docx?d=wae6f9d9f52be4e5d879258b2c4c13713&csf=1&web=1&e=NQuMA2"},
+    {n:"DGDATO.MN-DGT.IN-Matriz RACIV.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.1%20Gobierno%20DataSet/DGDATO.MN-DGT.IN-Matriz%20RACIV.xlsx?d=wc12283a028cc4d54806ae632df4d24c1&csf=1&web=1&e=Irx4gn"},
+  ],svc:"S03",s:"OK"},
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.2. Definir, diseñar e implantar procedimientos de gobierno, gestión y calidad",e:[
+    {n:"MIR-DGT.IN-Informe final mejora procesos de gobierno gestión y calidad datos.docx",u:""},
+    {n:"MIR-DGT.IN-Modelo Informe Final Mejora Procesos.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.2%20Soporte%20Gobierno%20DataSet/MIR-DGT.IN-Modelo%20Informe%20Final%20Mejora%20Procesos%20Gobierno%20Gesti%C3%B3n%20y%20Calidad%20dato.docx?d=w1872f376e8544938b16f40981d72b944&csf=1&web=1&e=Xv5Tp6"},
+    {n:"MIR-DGT.IN-Validación-Trazabilidad-Versionado Metadato.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.2%20Soporte%20Gobierno%20DataSet/MIR-DGT.IN-Validaci%C3%B3n-Trazabilidad-Versionado%20Metadato.docx?d=wff3d0104857a4297951a9f76efc8ed1a&csf=1&web=1&e=81DGl3"},
+    {n:"Plantillas Apoyo Control y Monitorización Calidad Dato",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.2%20Soporte%20Gobierno%20DataSet/Plantillas%20Apoyo%20Control%20y%20Monitorizaci%C3%B3n%20Calidad%20Dato?csf=1&web=1&e=oOqnnK"},
+  ],svc:"S03",s:"OK"},
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.3. Implantación del modelo de gobernanza en la plataforma tecnológica",e:[
+    {n:"MIR-DGT.IN-Ciclo de vida del dato.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.3%20Implantaci%C3%B3n%20Gobierno%20DataSet/MIR-DGT.IN-Ciclo%20de%20vida%20del%20dato.docx?d=w57c7663992564af5b532192910731e71&csf=1&web=1&e=E5M29p"},
+  ],svc:"S13",s:"OK"},
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.4. Definir, diseñar y elaborar un inventario de los activos de datos",e:[
+    {n:"MIR-DGT.IN-Inventariado activos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.4%20Inventario/MIR-DGT.IN-Inventariado%20activos.xlsx?d=w2a3d17b1470643c9867fe26a30081add&csf=1&web=1&e=eSZKrR"},
+  ],svc:"S04",s:"OK"},
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.5. Ingesta de información en el inventario de datos",e:[
+    {n:"MIR-DGT.IN-Inventario Conjuntos datos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.1%20Inventario%20de%20DataSet/MIR-DGT.IN-Inventario%20Conjuntos%20datos.xlsx?d=w756c1dee33d84338be3c0366ec8982fd&csf=1&web=1&e=k5EOI9"},
+  ],svc:"",s:"N/A"},
+  {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.6. Estudiar herramientas de soporte al modelo de gobernanza",e:[{n:"Informe ad-hoc",u:""}],svc:"S13",s:"N/A"},
+  // B3
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.1. Seleccionar datasets de interés del inventario",e:[
+    {n:"MIR-DGT.IN-Inventariado activos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.1%20Inventario%20de%20DataSet/MIR-DGT.IN-Inventariado%20activos.xlsx?d=w81c9e57767af41c48f459de894ce53ec&csf=1&web=1&e=8Vu08x"},
+    {n:"MIR-DGT.IN-Inventario Conjuntos datos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.1%20Inventario%20de%20DataSet/MIR-DGT.IN-Inventario%20Conjuntos%20datos.xlsx?d=w756c1dee33d84338be3c0366ec8982fd&csf=1&web=1&e=coneqp"},
+  ],svc:"",s:"N/A"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.2. Definición y Alcance de los datasets",e:[
+    {n:"MIR-DGT.Mapa de la Definición y alcance de los DataSet.pdf",u:"https://colaboraage.sharepoint.com/:b:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.2%20Definici%C3%B3n%20y%20alcance%20de%20DataSet/MIR-DGT.Mapa%20de%20la%20Definici%C3%B3n%20y%20alcance%20de%20los%20DataSet.pdf?csf=1&web=1&e=kW3tY6"},
+    {n:"MIR-DGT.IN-Inventario Conjuntos datos.url",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.2%20Definici%C3%B3n%20y%20alcance%20de%20DataSet/MIR-DGT.IN-Inventario%20Conjuntos%20datos.url?csf=1&web=1&e=i0Jpht"},
+  ],svc:"",s:"N/A"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.3. Diseñar los planes de trabajo para los datasets seleccionados",e:[
+    {n:"MIR-DGT.PT-Plan trabajo.xlsx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.3%20Plan%20de%20Trabajo%20DataSet/MIR-DGT.PT-Plan%20trabajo.xlsx.url?csf=1&web=1&e=A3FoRJ"},
+  ],svc:"",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.4. Ejecutar los planes de trabajo",e:[
+    {n:"MIR-DGT.PT-Plan trabajo.xlsx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.3%20Plan%20de%20Trabajo%20DataSet/MIR-DGT.PT-Plan%20trabajo.xlsx.url?csf=1&web=1&e=A3FoRJ"},
+  ],svc:"",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.5. Elaborar un glosario de términos de negocio",e:[
+    {n:"MIR-DGT.IN-Glosario de términos de negocio.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.5%20Glosario/MIR-DGT.IN-Glosario.xlsx?d=w265b0528b1104f5d8d5213db325ae277&csf=1&web=1&e=6VhurU"},
+  ],svc:"S05",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.6. Elaborar un diccionario de datos",e:[
+    {n:"MIR-DGT.IN-Diccionario.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.6%20Diccionario/MIR-DGT.IN-Diccionario.xlsx?d=wdac53f3f474b435e82f411cc62a5ab81&csf=1&web=1&e=l7PDqI"},
+  ],svc:"S05",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.7. Elaborar datos maestros y de referencia",e:[
+    {n:"MIR.DGT.IN-Datos Maestros Referencia.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.7%20Datos%20Maestros/MIR.DGT.IN-Datos%20Maestros%20Referencia.xlsx?d=w123211aab7cf4b4aa6cee9cb72f99443&csf=1&web=1&e=dNmpyp"},
+  ],svc:"S05",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.8. Analizar procedimientos relacionados con el ciclo de vida",e:[
+    {n:"MIR-DGT.IN-Ciclo de vida del dato.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.8%20Procedimientos%20ciclo%20de%20vida/MIR-DGT.IN-Ciclo%20de%20vida%20del%20dato.docx?d=wfef2624673434e6988e7fe460ebae7b1&csf=1&web=1&e=9sFfnU"},
+  ],svc:"S06",s:"N/A"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.9. Analizar y gestionar el linaje técnico y funcional",e:[
+    {n:"MIR-DGT.IN-Ciclo de vida del dato.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.8%20Procedimientos%20ciclo%20de%20vida/MIR-DGT.IN-Ciclo%20de%20vida%20del%20dato.docx?d=wfef2624673434e6988e7fe460ebae7b1&csf=1&web=1&e=9sFfnU"},
+  ],svc:"S06",s:"N/A"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.10. Analizar y diseñar procesos de archivado, recuperación y eliminación",e:[
+    {n:"MIR-DGT.IN-Ciclo de vida del dato.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.8%20Procedimientos%20ciclo%20de%20vida/MIR-DGT.IN-Ciclo%20de%20vida%20del%20dato.docx?d=wfef2624673434e6988e7fe460ebae7b1&csf=1&web=1&e=9sFfnU"},
+  ],svc:"S06",s:"N/A"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.11. Definir reglas de transformación y depuración de datos (ETLs)",e:[
+    {n:"MIR-DGT.IN-Informe Puesta Disposición Distribuciones.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.IN-Modelo%20Informe%20Puesta%20Disposici%C3%B3n%20Distribuciones.docx?d=w4b7e07dd0b774dcda04e988f4ecd6d95&csf=1&web=1&e=dENIqI"},
+    {n:"MIR-DGT.NM-Registro de Reglas dato-Siniestralidad_2024.xlsx",u:""},
+    {n:"Scripts Auditoría Calidad",u:""},
+  ],svc:"S08",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.12. Normalizar los datos en base a estándares internos y NTI-RISP",e:[
+    {n:"MIR-DGT.IN-Evidencias productos obtenidos.docx",u:""},
+    {n:"Normalización_Dataset_MIR_DGT.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.12%20Normalizaci%C3%B3n%20de%20datos/Normalizaci%C3%B3n_Dataset_MIR_DGT.xlsx?d=wac7e42f4a41c4dd99362e05dfa9fd893&csf=1&web=1&e=2fJ7Ng"},
+  ],svc:"S08",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.13. Normalizar los metadatos en base a la NTI-RISP",e:[
+    {n:"MIR-DGT.IN-Informe normalización datos y metadatos.docx",u:""},
+    {n:"Ficha M4M-Distintivo_Ambiental.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-Distintivo_Ambiental.xlsx?d=w86de490e7afd4f2ebc85d9380be69c4b&csf=1&web=1&e=SAXfVe"},
+    {n:"Ficha M4M-MATRABA_ALTAS_Diario.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-MATRABA_ALTAS_Diario.xlsx?d=we653bb99e2da4671bef122b9fa4eb239&csf=1&web=1&e=P5B1kV"},
+    {n:"Ficha M4M-MATRABA_ALTAS_Mensual.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-MATRABA_ALTAS_Mensual.xlsx?d=w8417beff006a49e883427f174db12a0e&csf=1&web=1&e=JzSsdj"},
+    {n:"Ficha M4M-MATRABA_BAJAS_Diario.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-MATRABA_BAJAS_Diario.xlsx?d=w7d20484180ad410cbbcefe4b1dfb0b50&csf=1&web=1&e=Nu3nSR"},
+    {n:"Ficha M4M-MATRABA_BAJAS_Mensual.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-MATRABA_BAJAS_Mensual.xlsx?d=w8ecd3b5fd88d449989662b86ed7b66fe&csf=1&web=1&e=4r16NV"},
+    {n:"Ficha M4M-MATRABA_TRANSF_Diario.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-MATRABA_TRANSF_Diario.xlsx?d=wd7376b3dfc3e4bd189f64e130de7d336&csf=1&web=1&e=OojXv5"},
+    {n:"Ficha M4M-MATRABA_TRANSF_Mensual.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-MATRABA_TRANSF_Mensual.xlsx?d=we274f72ed4b9463fa559db4f731a54a1&csf=1&web=1&e=3vf3TO"},
+    {n:"Ficha M4M-PdV_Anual.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-PdV_Anual.xlsx?d=w2d5d1ffe52b14416847705ee8068003d&csf=1&web=1&e=QFatLY"},
+    {n:"Ficha M4M-PdV_Mensual.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-PdV_Mensual.xlsx?d=w000a48c170274fef92d82063e0858665&csf=1&web=1&e=5Gx9uU"},
+    {n:"Ficha M4M-Siniestralidad_2024.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.13%20Normalizaci%C3%B3n%20de%20metadatos/MIR-DGT.FP-Ficha%20Metadatos_M4M-Siniestralidad_2024.xlsx?d=w147ab3bd15154306aae69c53ee0b9a47&csf=1&web=1&e=lA18lx"},
+    {n:"ETL_METADATOS_5.0.1.zip",u:""},
+  ],svc:"S08",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.14. Puesta a disposición de los metadatos en el catálogo (federación)",e:[
+    {n:"MIR-DGT.IN-Informe Puesta Disposición Distribuciones.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.IN-Modelo%20Informe%20Puesta%20Disposici%C3%B3n%20Distribuciones.docx?d=w4b7e07dd0b774dcda04e988f4ecd6d95&csf=1&web=1&e=dENIqI"},
+    {n:"MIR-DGT.MN-Disponibilización de metadatos en el catálogo",u:""},
+    {n:"catalog_DGT2.rdf",u:""},
+  ],svc:"S08",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.15. Asesorar en la selección de tecnologías PET",e:[
+    {n:"PET · 1. Microdatos Accidentes con Víctimas",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.15%20PET/1.%20Microdatos%20Accidentes%20con%20V%C3%ADctimas?csf=1&web=1&e=Pbtuat"},
+    {n:"PET · 2. Parque de Vehículos",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.15%20PET/2.%20Parque%20de%20Veh%C3%ADculos?csf=1&web=1&e=pujOID"},
+    {n:"PET · 3. Distintivo Ambiental",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.15%20PET/3.%20Dintintivo%20Ambiental?csf=1&web=1&e=85fMhd"},
+    {n:"PET · 4. Microdatos de MATRABA",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.15%20PET/4.%20Microdatos%20de%20MATRABA?csf=1&web=1&e=10tAZ9"},
+  ],svc:"S09",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.16. Apoyar en la integración de tecnologías PET en los flujos de datos",e:[
+    {n:"Checklist.xlsx",u:""},
+  ],svc:"S09",s:"OK"},
+  {b:"B3",n:"Diseño y Ejecución de Casos de Uso",a:"3.17. Documentar buenas prácticas y procedimientos de transformación",e:[
+    {n:"MIR-DGT.NM-PlanificaciónEvaluaciónCalidad_Siniestralidad.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.17%20Buenas%20pr%C3%A1cticas%20en%20transformaci%C3%B3n/MIR-DGT.NM-Planificaci%C3%B3nEvaluaci%C3%B3nCalidad_Siniestralidad.xlsx?d=w46ea30228b2d4cff81aa05018ebb03d0&csf=1&web=1&e=ragAd0"},
+    {n:"MIR-DGT.NM-PlanificaciónEvaluaciónCalidad_Parque_Vehiculos.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.17%20Buenas%20pr%C3%A1cticas%20en%20transformaci%C3%B3n/MIR-DGT.NM-Planificaci%C3%B3nEvaluaci%C3%B3nCalidad_Parque_Vehiculos.xlsx?d=we0d7aeeaffa74f238e88fac18943e68e&csf=1&web=1&e=8pGVpR"},
+    {n:"MIR-DGT.NM-PlanificaciónEvaluaciónCalidad_Distintivo_Ambiental.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.17%20Buenas%20pr%C3%A1cticas%20en%20transformaci%C3%B3n/MIR-DGT.NM-Planificaci%C3%B3nEvaluaci%C3%B3nCalidad_Distintivo_Ambiental.xlsx?d=w5102ff2ae8ec4838862b49f26aa21e12&csf=1&web=1&e=HQlUnp"},
+    {n:"MIR-DGT.NM-PlanificaciónEvaluaciónCalidad_MATRABA.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B3.%20Dise%C3%B1o%20y%20Ejecuci%C3%B3n%20de%20Casos%20de%20Uso/A%203.17%20Buenas%20pr%C3%A1cticas%20en%20transformaci%C3%B3n/MIR-DGT.NM-Planificaci%C3%B3nEvaluaci%C3%B3nCalidad_MATRABA.xlsx?d=wf6203e7a8026483ebd6c204e953b0cda&csf=1&web=1&e=2XXEuZ"},
+    {n:"MIR-DGT.IN-Registro Riesgos.xlsx",u:""},
+  ],svc:"",s:"OK"},
+  // B4
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.1. Analizar requerimientos catálogo AGE + Organismos",e:[
+    {n:"MIR-DGT.IN-Requerimientos Catálogos AGE-MIR-DGT.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.1%20An%C3%A1lisis%20Cat%C3%A1logo%20AGE+Organismos/MIR-DGT.IN-Requerimientos%20Cat%C3%A1logos%20AGE-MIR-DGT.docx?d=we0256b6243ef4406a872e7600251eb9a&csf=1&web=1&e=SYadw3"},
+  ],svc:"",s:"OK"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.2. Definición de procedimientos de gestión del catálogo",e:[
+    {n:"MIR-DGT.IN-Requerimientos Catálogos AGE-MIR-DGT.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.2%20Definici%C3%B3n%20Procedimientos%20Cat%C3%A1logo/MIR-DGT.IN-Requerimientos%20Cat%C3%A1logos%20AGE-MIR-DGT.docx?d=wa86c746e9e1f4da394a0721f9320ba05&csf=1&web=1&e=5FALUk"},
+    {n:"MIR-DGT.IN-Informe Puesta Disposición Distribuciones.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.IN-Modelo%20Informe%20Puesta%20Disposici%C3%B3n%20Distribuciones.docx?d=w4b7e07dd0b774dcda04e988f4ecd6d95&csf=1&web=1&e=dENIqI"},
+  ],svc:"",s:"OK"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.3. Diseñar arquitectura temporal lógica/física",e:[
+    {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.3%20Arquitectura%20L%C3%B3gica%20y%20F%C3%ADsica/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx?d=wb61494655d2a428b944b1feb866d6abf&csf=1&web=1&e=7W5s5o"},
+    {n:"MIR-DGT_Diagrama Físico.drawio.png",u:"https://colaboraage.sharepoint.com/:i:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.3%20Arquitectura%20L%C3%B3gica%20y%20F%C3%ADsica/MIR-DGT_Diagrama%20F%C3%ADsico.drawio.png?csf=1&web=1&e=gvWfHb"},
+  ],svc:"S13",s:"OK"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.4. Implantación en la plataforma",e:[
+    {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.4%20Implantaci%C3%B3n%20Plataforma/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx.url?csf=1&web=1&e=lsoJyI"},
+  ],svc:"S13",s:"OK"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.5. Configuración e implementación procesos de gestión del catálogo",e:[
+    {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.4%20Implantaci%C3%B3n%20Plataforma/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx.url?csf=1&web=1&e=lsoJyI"},
+    {n:"MIR-DGT.FP-GUÍA MOTOR ETL DE INGESTA DE METADATOS.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.5%20Configuraci%C3%B3n%20Procesos%20Gesti%C3%B3n%20Cat%C3%A1logo/MIR-DGT.FP-GU%C3%8DA%20MOTOR%20ETL%20DE%20INGESTA%20DE%20METADATOS.docx?d=w342194fff9874a55bb897de0ae1f2f7a&csf=1&web=1&e=KEFnNl"},
+  ],svc:"",s:"OK"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.6. Ingesta del catálogo para los conjuntos de datos de cada caso de uso",e:[
+    {n:"MIR-DGT.IN-Inventario Conjuntos datos.xlsx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.6%20Ingesta%20Cat%C3%A1logo%20DataSet/MIR-DGT.IN-Inventario%20Conjuntos%20datos.xlsx.url?csf=1&web=1&e=TDyyH1"},
+    {n:"Evidencias inclusión catálogo",u:""},
+  ],svc:"",s:"OK"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.7. Publicación de catálogo en el portal de datos del Ministerio/Organismo",e:[
+    {n:"MIR-DGT.IN-Informe Puesta Disposición Distribuciones.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.IN-Modelo%20Informe%20Puesta%20Disposici%C3%B3n%20Distribuciones.docx?d=w4b7e07dd0b774dcda04e988f4ecd6d95&csf=1&web=1&e=dENIqI"},
+    {n:"Evidencias publicación CKAN",u:""},
+  ],svc:"S08",s:"KO"},
+  {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.8. Análisis de la integración del catálogo con herramientas de visualización",e:[{n:"NA",u:""}],svc:"",s:"N/A"},
+  // B5
+  {b:"B5",n:"Federación con Catálogo AGE",a:"5.1. Definir los procesos de federación del catálogo del Organismo con la AGE",e:[
+    {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B5.%20Federaci%C3%B3n%20con%20Cat%C3%A1logo%20de%20datos%20AGE/A%205.1%20Procesos%20federaci%C3%B3n%20Cat%C3%A1logos/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx.url?csf=1&web=1&e=gRI2lA"},
+  ],svc:"",s:"OK"},
+  {b:"B5",n:"Federación con Catálogo AGE",a:"5.2. Implementar los procesos de federación de datos",e:[
+    {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B5.%20Federaci%C3%B3n%20con%20Cat%C3%A1logo%20de%20datos%20AGE/A%205.1%20Procesos%20federaci%C3%B3n%20Cat%C3%A1logos/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx.url?csf=1&web=1&e=gRI2lA"},
+  ],svc:"S13",s:"OK"},
+  {b:"B5",n:"Federación con Catálogo AGE",a:"5.3. Prueba de concepto de federación",e:[
+    {n:"MIR-DGT.IN-Evidencias POC.docx",u:""},
+  ],svc:"S13",s:"KO"},
+  {b:"B5",n:"Federación con Catálogo AGE",a:"5.4. Publicar los datos del Organismo en el Catálogo de datos de la AGE",e:[
+    {n:"MIR-DGT.IN-Evidencias publicación.docx",u:""},
+  ],svc:"S08",s:"KO"},
+  {b:"B5",n:"Federación con Catálogo AGE",a:"5.5. Evaluar la madurez final del Organismo",e:[
+    {n:"MIR-DGT.FP-Herramienta Evaluación As-Is_To-Be_Fin de proyecto.xlsx ✅",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B5.%20Federaci%C3%B3n%20con%20Cat%C3%A1logo%20de%20datos%20AGE/A%205.5%20Evaluaci%C3%B3n%20madurez%20FINAL/MIR-DGT.FP-Herramienta%20Evaluaci%C3%B3n%20As-Is_To-Be_Fin%20de%20proyecto.xlsx?d=wef2fbb0ba2ae4566b9aac66f54d8bfca&csf=1&web=1&e=MiFW9V"},
+    {n:"MIR-DGT.PT-Informe Evaluación As-Is_To-be_Fin de proyecto.pptx ⚠️",u:"https://colaboraage.sharepoint.com/:p:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B5.%20Federaci%C3%B3n%20con%20Cat%C3%A1logo%20de%20datos%20AGE/A%205.5%20Evaluaci%C3%B3n%20madurez%20FINAL/MIR-DGT.PT-Informe%20Evaluaci%C3%B3n%20As-Is_To-be_Fin%20de%20proyecto.pptx?d=wfff36e0dbb804788875f8433fc86e39f&csf=1&web=1&e=gtXiam"},
+    {n:"DGT_Beneficios_ImpulsaDATA.pptx",u:"https://colaboraage.sharepoint.com/:p:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B5.%20Federaci%C3%B3n%20con%20Cat%C3%A1logo%20de%20datos%20AGE/A%205.5%20Evaluaci%C3%B3n%20madurez%20FINAL/DGT_Beneficios_ImpulsaDATA.pptx?d=w86736ec511d34e4cb0708a832aae9808&csf=1&web=1&e=mHcJbl"},
+  ],svc:"S01",s:"KO"},
+  // B6
+  {b:"B6",n:"Gestión del Cambio",a:"6.1. Plan de sensibilización del proyecto a los distintos grupos de interés",e:[
+    {n:"A 6.1 Plan Sensibilización (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B6.%20Gesti%C3%B3n%20del%20Cambio/A%206.1%20Plan%20Sensibilizaci%C3%B3n?csf=1&web=1&e=sxIQ0E"},
+  ],svc:"S10",s:"OK"},
+  {b:"B6",n:"Gestión del Cambio",a:"6.2. Plan de comunicación del proyecto",e:[
+    {n:"MIR-DGT.NM-Plan Comunicación.docx",u:""},
+    {n:"MIR-DGT.IN-Reuniones Proyecto.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B6.%20Gesti%C3%B3n%20del%20Cambio/A%206.2%20Plan%20Comunicaci%C3%B3n/MIR-DGT.IN-Reuniones%20Proyecto.xlsx?d=w39ff05b32bd54093a2eb3e9e0679ab65&csf=1&web=1&e=rln6u0"},
+  ],svc:"S10",s:"OK"},
+  {b:"B6",n:"Gestión del Cambio",a:"6.3. Plan de formación funcional y técnica",e:[{n:"Incluido en 6.2 + material específico de formación",u:""}],svc:"S10",s:"KO"},
+  // B7
+  {b:"B7",n:"Transferencia de Conocimiento",a:"7.1. Plan de transferencia del servicio prestado",e:[
+    {n:"MIR-DGT.PP-Plan Devolución Servicio.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B7.%20Transferencia%20del%20conocimiento/A%207.1%20Plan%20Transferencia/MIR-DGT.PP-Plan%20Devoluci%C3%B3n%20Servicio.docx?d=w5cacad839e83447597fe87d90be12de7&csf=1&web=1&e=JRlFAC"},
+  ],svc:"",s:"KO"},
+  // B8
+  {b:"B8",n:"Apoyo Legal",a:"8.0. Elaborar los acuerdos y convenios con los Ministerios/Organismos",e:[
+    {n:"DGDATO.AI-Acuerdo Interdepartamental MIR-DGT",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B8.%20Apoyo%20Legal/A%208.0%20Acuerdos%20y%20Convenios/DGDATO.AI-Acuerdo%20Interdepartamental%20MIR-DGT.url?csf=1&web=1&e=LD1q75"},
+    {n:"DGDATO.CC-Convenio Colaboración MIR-DGT",u:""},
+  ],svc:"S12",s:"OK"},
+  {b:"B8",n:"Apoyo Legal",a:"8.1. Asesoramiento Legal y Normativo",e:[
+    {n:"Matraba (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B8.%20Apoyo%20Legal/A%208.1.%20%20Asesoramiento%20Legal%20y%20Normativo/Matraba?csf=1&web=1&e=ABeKnR"},
+    {n:"Microdatos de bastidores (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B8.%20Apoyo%20Legal/A%208.1.%20%20Asesoramiento%20Legal%20y%20Normativo/Microdatos%20de%20bastidores?csf=1&web=1&e=AQnRv8"},
+    {n:"Parque de vehículos (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B8.%20Apoyo%20Legal/A%208.1.%20%20Asesoramiento%20Legal%20y%20Normativo/Parque%20de%20veh%C3%ADculos?csf=1&web=1&e=4KYJYZ"},
+    {n:"Víctimas por accidentes (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B8.%20Apoyo%20Legal/A%208.1.%20%20Asesoramiento%20Legal%20y%20Normativo/V%C3%ADctimas%20por%20accidentes?csf=1&web=1&e=Fiud44"},
+  ],svc:"S12",s:"OK"},
+  // B9
+  {b:"B9",n:"Seguimiento y Control",a:"9.1. Reuniones de seguimiento de los trabajos",e:[
+    {n:"A 9.1 Reuniones Seguimiento (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B9.%20Seguimiento%20y%20control/A%209.1%20Reuniones%20Seguimiento?csf=1&web=1&e=41aZeD"},
+  ],svc:"",s:"OK"},
+  {b:"B9",n:"Seguimiento y Control",a:"9.2. Comisiones de seguimiento del proyecto",e:[
+    {n:"A 9.2 Comisiones Seguimiento (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B9.%20Seguimiento%20y%20control/A%209.2%20Comisiones%20Seguimiento?csf=1&web=1&e=4PrBTv"},
+    {n:"Planificaciones (carpeta)",u:"https://colaboraage.sharepoint.com/:f:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B9.%20Seguimiento%20y%20control/Planificaciones?csf=1&web=1&e=dmovhj"},
+  ],svc:"",s:"OK"},
+  // B10
+  {b:"B10",n:"Demanda Sectorial",a:"10.1. Análisis Demanda Sectorial",e:[
+    {n:"MIR-DGT.IN-Análisis Demanda Sectorial.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B10.%20Demanda%20Sectorial/A%2010.1%20An%C3%A1lisis%20Demanda%20Sectorial/MIR-DGT.IN-An%C3%A1lisis%20Demanda%20Sectorial.docx?d=wc1d7f3383c4b49a68ce740eaaa442ec6&csf=1&web=1&e=wg5Aiq"},
+    {n:"MIR-DGT.IN-Análisis Demanda Sectorial Final.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B10.%20Demanda%20Sectorial/A%2010.1%20An%C3%A1lisis%20Demanda%20Sectorial/MIR-DGT.IN-An%C3%A1lisis%20Demanda%20Sectorial%20Final.docx?d=w1129bd79623b4a72a49588d098244813&csf=1&web=1&e=iHqqaO"},
+  ],svc:"S11",s:"OK"},
+];
+
+const DATASETS=[
+  {name:"Siniestralidad con Víctimas",id:"SINI:000001",icon:"🚗",bg:"#fef9c3",phases:["Análisis PET","Informe PET","Validación ARX","Metadatos DCAT","Publicación CKAN","Federado AGE"]},
+  {name:"Parque de Vehículos",id:"PARQUE:000001/000002",icon:"🏎️",bg:"#f3e8ff",phases:["Análisis PET","Informe PET","Validación ARX","Metadatos DCAT","Publicación CKAN","Federado AGE"]},
+  {name:"Distintivo Ambiental",id:"AMBI:000001",icon:"🌿",bg:"#dcfce7",phases:["Análisis PET","Informe PET","Validación ARX","Metadatos DCAT","Publicación CKAN","Federado AGE"]},
+  {name:"MATRABA (Altas, Trans., Bajas)",id:"MATRABA series",icon:"📋",bg:"#e0f2fe",phases:["Análisis PET","Informe PET","Validación ARX","Metadatos DCAT","Publicación CKAN","Federado AGE"]},
+];
+
+const MADUREZ=[
+  {c:"InfraTec",n:"Infraestructura tecnológica",i:1,f:3},
+  {c:"ReqDat",n:"Gestión de requisitos",i:0,f:1},
+  {c:"MetDat",n:"Gestión del metadato",i:0,f:3},
+  {c:"PolDat",n:"Políticas y procedimientos",i:1,f:1},
+  {c:"CtrlDQ",n:"Control calidad del dato",i:0,f:1},
+  {c:"ArqDat",n:"Arquitectura del dato",i:0,f:1},
+  {c:"CIIDat",n:"Compartición e integración",i:1,f:3},
+  {c:"RiesDat",n:"Optimización de riesgos",i:0,f:1},
+  {c:"SegDat",n:"Seguridad del dato",i:1,f:1},
+  {c:"EstOrg",n:"Estructuras organizativas",i:0,f:1},
+];
+
+const PB={
+  B0:{t:"Reunión inaugural del proyecto con MIR-DGT y DGDATO. Alcance, equipo, metodología y calendario establecidos.",s:[]},
+  B1:{t:"Diagnóstico inicial de la DGT. Inventario de conjuntos de datos, selección de 4 datasets de alto valor y evaluación de madurez inicial (MGMD). La DGT partía de infraestructuras sólidas (Teradata DWH, MicroStrategy) pero carecía de procesos formalizados de metadatado y publicación abierta. Se estableció el Grado Operativo como objetivo.",s:["S01 · Nivel de Madurez","S13 · Arquitectura"]},
+  B2:{t:"Diseño del modelo de gobierno del dato: estrategia del dato, Matriz RACIV, ciclo de vida e implantación. 10 procesos del Grado Operativo MGMD documentados. 79 riesgos del dato identificados. Plantillas de calidad generadas para cada dataset.",s:["S02 · Estrategia","S03 · Gobierno y Calidad","S04 · Inventario"]},
+  B3:{t:"Núcleo técnico: glosario, diccionario, datos maestros, ETLs, normalización NTI-RISP, metadatos DCAT-AP-ES, análisis PET y validación ARX para los 4 datasets. Pipeline completo Teradata→SFTP→PostgreSQL→CKAN→Red SARA→datos.gob.es operativo. Planificaciones de calidad por dataset.",s:["S05 · Glosarios","S06 · Ciclo de vida","S08 · Metadatos DCAT-AP-ES","S09 · Tecnologías PET"]},
+  B4:{t:"Diseño e implantación del catálogo CKAN con PostgreSQL. Arquitectura lógica y física, ingesta de los 4 datasets. Guía de motor ETL de ingesta de metadatos generada. Validación SHACL automática implementada.",s:["S08 · Puesta a disposición","S13 · Plataformas"]},
+  B5:{t:"Federación de los 4 datasets hacia datos.gob.es a través de Red SARA. Pendiente: evidencias POC, publicación en producción y evaluación final de madurez (informe pptx).",s:["S01 · Madurez final","S08 · Metadatos","S13 · Plataformas"]},
+  B6:{t:"3 jornadas de sensibilización (nov-dic 2025) + vídeos. Plan de comunicación completado. Plan de formación pendiente.",s:["S10 · Gestión del cambio"]},
+  B7:{t:"Plan de devolución del servicio pendiente. Debe incluir guía de mantenimiento del catálogo y gobierno del dato para el equipo DGT.",s:[]},
+  B8:{t:"Acuerdo Interdepartamental y Convenio de Colaboración firmados. Análisis jurídicos completados para MATRABA, Parque de Vehículos, Víctimas por accidentes y Microdatos de bastidores.",s:["S12 · Apoyo legal"]},
+  B9:{t:"Seguimiento continuo: FY2025 completo + 11 reuniones semanales en 2026 + 5 comisiones de seguimiento (oct-2025 a abr-2026).",s:[]},
+  B10:{t:"Análisis de demanda sectorial completado. Preanalisis previo y análisis final disponibles.",s:["S11 · Demanda sectorial"]},
+};
+
+const SIGNS={B0:"🚦",B1:"🔍",B2:"🏗️",B3:"⚙️",B4:"🗂️",B5:"🔗",B6:"📢",B7:"📚",B8:"⚖️",B9:"📊",B10:"📈"};
+
+// ════ STATE ════════════════════════════════════
+const SK='mirdgt_v5';
+let CHK={};
+function loadCHK(){try{CHK=JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){CHK={};}}
+function saveCHK(){try{localStorage.setItem(SK,JSON.stringify(CHK));}catch(e){}}
+function cid(r){return r.b+'_'+r.a.slice(0,32);}
+function byBlock(){const m={};DATA.forEach(r=>{if(!m[r.b])m[r.b]={n:r.n,rows:[]};m[r.b].rows.push(r);});return m;}
+function stats(){
+  let ok=0,ko=0,na=0;
+  DATA.forEach(r=>{if(r.s==='N/A')na++;else if(CHK[cid(r)]||r.s==='OK')ok++;else ko++;});
+  return{total:DATA.length,ok,ko,na};
+}
+
+// ════ CHARTS ══════════════════════════════════
+function drawDonut(ok,ko,na,total){
+  const c=document.getElementById('donut'),ctx=c.getContext('2d');
+  const W=140,cx=W/2,cy=W/2,R=62,ri=42;
+  ctx.clearRect(0,0,W,W);
+  let s=-Math.PI/2;
+  [{v:ok,col:'#059669'},{v:ko,col:'#dc2626'},{v:na,col:'#cbd5e1'}].forEach(sl=>{
+    if(!sl.v)return;
+    const a=(sl.v/total)*2*Math.PI;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,s,s+a);ctx.closePath();
+    ctx.fillStyle=sl.col;ctx.fill();s+=a;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,ri,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
+}
+
+function drawGauge(pct){
+  const c=document.getElementById('gauge'),ctx=c.getContext('2d');
+  const W=180,H=100,cx=W/2,cy=H-8,R=70,sw=13;
+  ctx.clearRect(0,0,W,H);
+  ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.strokeStyle='#e2e6f3';ctx.lineWidth=sw;ctx.lineCap='round';ctx.stroke();
+  if(pct>0){
+    const g=ctx.createLinearGradient(cx-R,cy,cx+R,cy);
+    g.addColorStop(0,'#059669');g.addColorStop(.5,'#0891b2');g.addColorStop(1,'#2563eb');
+    ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,Math.PI+(pct/100)*Math.PI);
+    ctx.strokeStyle=g;ctx.lineWidth=sw;ctx.lineCap='round';ctx.stroke();
+  }
+  const na=Math.PI+(pct/100)*Math.PI;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*.7*Math.cos(na),cy+R*.7*Math.sin(na));
+  ctx.strokeStyle='#374151';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,5,0,2*Math.PI);ctx.fillStyle='#374151';ctx.fill();
+}
+
+let rHov=-1;
+function drawRadar(hov=-1){
+  const c=document.getElementById('radar'),ctx=c.getContext('2d');
+  const W=340,H=300,cx=W/2,cy=H/2+10,maxR=108,n=MADUREZ.length,MAX=3;
+  ctx.clearRect(0,0,W,H);
+  for(let lv=1;lv<=MAX;lv++){
+    const r=lv/MAX*maxR;
+    ctx.beginPath();
+    for(let i=0;i<n;i++){const a=i/n*2*Math.PI-Math.PI/2;i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));}
+    ctx.closePath();ctx.strokeStyle='#e2e6f3';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle='rgba(226,230,243,.15)';ctx.fill();
+    ctx.fillStyle='#b0b8cc';ctx.font='10px Plus Jakarta Sans';ctx.textAlign='left';ctx.fillText('NC'+lv,cx+4,cy-r+4);
+  }
+  MADUREZ.forEach((m,i)=>{
+    const a=i/n*2*Math.PI-Math.PI/2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+maxR*Math.cos(a),cy+maxR*Math.sin(a));ctx.strokeStyle='#dde1ef';ctx.lineWidth=1;ctx.stroke();
+    const lx=cx+(maxR+20)*Math.cos(a),ly=cy+(maxR+20)*Math.sin(a);
+    ctx.font=`${hov===i?'bold ':''}10px Plus Jakarta Sans`;ctx.fillStyle=hov===i?'#2563eb':'#374151';ctx.textAlign='center';ctx.fillText(m.c,lx,ly+4);
+  });
+  ctx.beginPath();MADUREZ.forEach((m,i)=>{const a=i/n*2*Math.PI-Math.PI/2;const r=m.f/MAX*maxR;i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));});
+  ctx.closePath();ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(148,163,184,.7)';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='rgba(148,163,184,.08)';ctx.fill();ctx.setLineDash([]);
+  ctx.beginPath();MADUREZ.forEach((m,i)=>{const a=i/n*2*Math.PI-Math.PI/2;const r=Math.max(m.i/MAX*maxR,3);i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));});
+  ctx.closePath();ctx.strokeStyle='#2563eb';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='rgba(37,99,235,.1)';ctx.fill();
+  MADUREZ.forEach((m,i)=>{
+    const a=i/n*2*Math.PI-Math.PI/2;
+    const r=Math.max(m.i/MAX*maxR,3);
+    const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,hov===i?6:4,0,2*Math.PI);ctx.fillStyle='#2563eb';ctx.fill();
+    if(hov===i){
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      const tx=x+(x>cx?8:-92),ty=y+(y>cy?16:-16);
+      ctx.fillStyle='rgba(15,18,40,.9)';
+      rrect(ctx,tx-2,ty-14,94,20,5);ctx.fill();
+      ctx.fillStyle='#fff';ctx.font='bold 10px Plus Jakarta Sans';ctx.textAlign='left';
+      ctx.fillText(`${m.c}: NC${m.i}→NC${m.f}`,tx+5,ty);
+    }
+    const rf=m.f/MAX*maxR;
+    const xf=cx+rf*Math.cos(a),yf=cy+rf*Math.sin(a);
+    ctx.beginPath();ctx.arc(xf,yf,hov===i?6:4,0,2*Math.PI);ctx.fillStyle=m.f>=3?'#ec4899':'#94a3b8';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+  });
+}
+function rrect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+
+function drawBarChart(){
+  const map=byBlock();
+  const c=document.getElementById('barChart');if(!c)return;
+  const wrap=document.getElementById('barChartWrap');
+  const W=wrap?wrap.clientWidth:900;
+  c.width=W;c.height=80;
+  const ctx=c.getContext('2d');
+  const blocks=Object.keys(map);
+  const pad=20,gap=6,bw=Math.floor((W-pad*2-gap*(blocks.length-1))/blocks.length);
+  const maxT=Math.max(...Object.values(map).map(v=>v.rows.length));
+  const maxH=52;
+  ctx.clearRect(0,0,W,80);
+  blocks.forEach((b,i)=>{
+    const rows=map[b].rows;
+    const ok=rows.filter(r=>r.s!=='N/A'&&(CHK[cid(r)]||r.s==='OK')).length;
+    const ko=rows.filter(r=>r.s==='KO'&&!CHK[cid(r)]).length;
+    const na=rows.filter(r=>r.s==='N/A').length;
+    const t=rows.length,sc=t/maxT;
+    const x=pad+i*(bw+gap);
+    const okH=Math.round(ok/t*maxH*sc),koH=Math.round(ko/t*maxH*sc),naH=Math.round(na/t*maxH*sc);
+    let y=maxH+6;
+    if(naH>0){ctx.fillStyle='#cbd5e1';ctx.fillRect(x,y-naH,bw,naH);y-=naH;}
+    if(koH>0){ctx.fillStyle='#dc2626';ctx.fillRect(x,y-koH,bw,koH);y-=koH;}
+    if(okH>0){ctx.fillStyle='#059669';ctx.fillRect(x,y-okH,bw,okH);}
+    ctx.fillStyle='#9ca3af';ctx.font='bold 8px Plus Jakarta Sans';ctx.textAlign='center';
+    ctx.fillText(b,x+bw/2,74);
+    ctx.fillStyle='#374151';ctx.font='bold 9px Plus Jakarta Sans';
+    ctx.fillText(t,x+bw/2,maxH+6-Math.round(t/maxT*maxH)-4);
+  });
+}
+
+// ════ UPDATE ══════════════════════════════════
+function updateAll(){
+  const {total,ok,ko,na}=stats();
+  const pct=Math.round(ok/total*100);
+  const appPct=Math.round(ok/(ok+ko)*100)||0;
+  document.getElementById('kTot').textContent=total;
+  document.getElementById('kOk').textContent=ok;
+  document.getElementById('kKo').textContent=ko;
+  document.getElementById('kNa').textContent=na;
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('lOk').textContent=ok;
+  document.getElementById('lKo').textContent=ko;
+  document.getElementById('lNa').textContent=na;
+  document.getElementById('dPct').textContent=pct+'%';
+  document.getElementById('dOk').textContent=ok;
+  document.getElementById('dKo').textContent=ko;
+  document.getElementById('dNa').textContent=na;
+  document.getElementById('gVal').textContent=appPct+'%';
+  document.getElementById('bOk').style.width=(ok/total*100)+'%';
+  document.getElementById('bKo').style.width=(ko/total*100)+'%';
+  document.getElementById('bNa').style.width=(na/total*100)+'%';
+  drawDonut(ok,ko,na,total);
+  drawGauge(appPct);
+  drawBarChart();
+  // update road signs
+  const map=byBlock();
+  Object.keys(map).forEach(b=>{
+    const el=document.getElementById('sign-'+b);if(!el)return;
+    const rows=map[b].rows;
+    const hasKO=rows.some(r=>r.s==='KO'&&!CHK[cid(r)]);
+    const allNA=rows.every(r=>r.s==='N/A');
+    el.className='msign '+(allNA?'na':hasKO?'ko':'ok');
+  });
+}
+
+function bdg(s,checked){
+  if(s==='N/A')return'<span class="bdg bna3">— N/A</span>';
+  if(checked||s==='OK')return'<span class="bdg bok3">✓ OK</span>';
+  return'<span class="bdg bko3">✗ KO</span>';
+}
+
+// ════ INIT ════════════════════════════════════
+function init(){
+  loadCHK();
+  document.getElementById('fhoy').textContent=new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+  const map=byBlock();
+
+  // ROAD
+  const rm=document.getElementById('roadMs');
+  const blocks=Object.keys(map);
+  blocks.forEach((b,idx)=>{
+    const rows=map[b].rows;
+    const hasKO=rows.some(r=>r.s==='KO'&&!CHK[cid(r)]);
+    const allNA=rows.every(r=>r.s==='N/A');
+    const cls=allNA?'na':hasKO?'ko':'ok';
+    const okC=rows.filter(r=>r.s!=='N/A'&&(CHK[cid(r)]||r.s==='OK')).length;
+    const totC=rows.filter(r=>r.s!=='N/A').length;
+    const pb=PB[b]||{t:''};
+    const ms=document.createElement('div');ms.className='ms';
+    ms.innerHTML=`<div class="msign ${cls}" id="sign-${b}">${SIGNS[b]||b}</div>
+    <div class="mcode">${b}</div><div class="mname">${map[b].n}</div>
+    <div class="rtt"><strong>${b} · ${map[b].n}</strong><br>${okC}/${totC} actividades aplicables<br><span style="font-size:10px;color:#9ca3af">${pb.t.slice(0,60)}…</span></div>`;
+    ms.addEventListener('click',()=>{const el=document.getElementById('bl-'+b);if(el){el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'start'});}});
+    rm.appendChild(ms);
+    if(idx<blocks.length-1){
+      const conn=document.createElement('div');
+      conn.className='rconn'+(cls==='ok'?' ok-c':'');
+      rm.appendChild(conn);
+    }
+  });
+
+  // DATASETS
+  const dg=document.getElementById('dsGrid');
+  DATASETS.forEach(ds=>{
+    const card=document.createElement('div');card.className='dsc';
+    card.innerHTML=`<div class="dsh"><div class="dsi" style="background:${ds.bg}">${ds.icon}</div><div><div class="dsn">${ds.name}</div><div class="dsid">${ds.id}</div></div><div class="dsfed">✓ Federado</div></div>
+    <div class="pipe">${ds.phases.map(p=>`<div class="ps"><div class="pd">✓</div><div class="pl">${p}</div></div>`).join('')}</div>`;
+    dg.appendChild(card);
+  });
+
+  // MADUREZ
+  const mi=document.getElementById('madItems');
+  MADUREZ.forEach(m=>{
+    const d=document.createElement('div');d.className='mi';
+    d.innerHTML=`<span class="mc2">${m.c}</span><span class="mn2">${m.n}</span><span class="nb ni">NC${m.i}</span><span style="font-size:9px;color:var(--t3)">→</span><span class="nb nf">NC${m.f}</span>`;
+    mi.appendChild(d);
+  });
+
+  // RADAR hover
+  const rc=document.getElementById('radar');
+  const Ww=340,Hh=300,cxr=Ww/2,cyr=Hh/2+10,maxR=108,nr=MADUREZ.length,MAX=3;
+  rc.addEventListener('mousemove',e=>{
+    const rect=rc.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    let found=-1;
+    MADUREZ.forEach((m,i)=>{
+      const a=i/nr*2*Math.PI-Math.PI/2;const r=Math.max(m.i/MAX*maxR,3);
+      if(Math.hypot(mx-(cxr+r*Math.cos(a)),my-(cyr+r*Math.sin(a)))<12)found=i;
+    });
+    if(found!==rHov){rHov=found;drawRadar(rHov);}
+  });
+  rc.addEventListener('mouseleave',()=>{rHov=-1;drawRadar(-1);});
+
+  // ACCORDION
+  const acc=document.getElementById('acc');
+  Object.entries(map).forEach(([b,{n,rows}])=>{
+    const ok2=rows.filter(r=>r.s==='OK').length;
+    const ko2=rows.filter(r=>r.s==='KO').length;
+    const na2=rows.filter(r=>r.s==='N/A').length;
+    const t=rows.length;
+    const pb=PB[b]||{t:'',s:[]};
+    const item=document.createElement('div');item.className='ai';item.id='bl-'+b;
+    const tbody=rows.map((r,ri)=>{
+      const id=cid(r);const isNA=r.s==='N/A';const checked=!isNA&&!!CHK[id];
+      const sid=id.replace(/[^a-z0-9]/gi,'_');
+      const eArr=Array.isArray(r.e)?r.e:[{n:r.e,u:""}];
+      const eHTML=eArr.map(f=>f.u
+        ?`<span class="ent-file"><a href="${f.u}" target="_blank" style="color:var(--a);text-decoration:none;display:flex;align-items:center;gap:4px;"><span style="font-size:10px">🔗</span>${f.n}</a></span>`
+        :`<span class="ent-file" style="color:var(--t3)">${f.n}</span>`
+      ).join('');
+      const svcH=r.svc?`<span class="svc">${r.svc}</span>`:'';
+      return `<tr class="${checked?'done':''}" id="tr-${sid}">
+        <td><div class="chk ${isNA?'dis':checked?'on':''}" id="ck-${sid}" onclick="toggle('${id}','${b}',${ri})"></div></td>
+        <td class="act">${r.a}${svcH?'<br>'+svcH:''}</td>
+        <td class="ent">${eHTML}</td>
+        <td id="bd-${sid}">${bdg(r.s,checked)}</td>
+      </tr>`;
+    }).join('');
+    item.innerHTML=`
+      <div class="at">
+        <div class="ac">${b}</div>
+        <div style="font-size:16px;margin-right:2px">${SIGNS[b]||''}</div>
+        <div class="an">${n}</div>
+        <div class="apills">
+          ${ok2>0?`<span class="pill pok">${ok2} OK</span>`:''}
+          ${ko2>0?`<span class="pill pko">${ko2} KO</span>`:''}
+          ${na2>0?`<span class="pill pna">${na2} N/A</span>`:''}
+        </div>
+        <div class="amini">
+          ${ok2>0?`<div class="mok" style="width:${ok2/t*100}%"></div>`:''}
+          ${ko2>0?`<div class="mko" style="width:${ko2/t*100}%"></div>`:''}
+          ${na2>0?`<div class="mna" style="width:${na2/t*100}%"></div>`:''}
+        </div>
+        <div class="achev">▼</div>
+      </div>
+      <div class="ab">
+        ${pb.t?`<div class="pb2"><div class="pbt">📌 Playbook · Qué se hizo y por qué</div><div class="pbtx">${pb.t}</div>${pb.s.length?`<div class="pbsv">${pb.s.map(sv=>`<span class="sv">${sv}</span>`).join('')}</div>`:''}</div>`:''}
+        <table>
+          <thead><tr><th style="width:30px">✓</th><th style="width:36%">Actividad · Servicio</th><th>Entregable MIR-DGT</th><th style="width:70px">Estado</th></tr></thead>
+          <tbody>${tbody}</tbody>
+        </table>
+      </div>`;
+    item.querySelector('.at').addEventListener('click',()=>item.classList.toggle('open'));
+    acc.appendChild(item);
+  });
+
+  setTimeout(()=>{updateAll();drawRadar(-1);drawBarChart();},300);
+}
+
+function toggle(id,b,ri){
+  const map=byBlock();const row=map[b].rows[ri];if(row.s==='N/A')return;
+  const sid=id.replace(/[^a-z0-9]/gi,'_');
+  CHK[id]?delete CHK[id]:(CHK[id]=true);saveCHK();
+  const on=!!CHK[id];
+  const ck=document.getElementById('ck-'+sid);const tr=document.getElementById('tr-'+sid);const bd=document.getElementById('bd-'+sid);
+  if(ck)ck.className='chk'+(on?' on':'');if(tr)tr.className=on?'done':'';if(bd)bd.innerHTML=bdg(row.s,on);
+  updateAll();
+}
+function resetAll(){if(!confirm('¿Resetear todos los checks?'))return;CHK={};saveCHK();location.reload();}
+function togglePres(on){
+  document.body.classList.toggle('pres',on);
+  document.querySelector('.btnp').style.display=on?'none':'flex';
+  document.getElementById('btnX').style.display=on?'flex':'none';
+  if(on){document.querySelectorAll('.ai').forEach(i=>i.classList.add('open'));window.scrollTo(0,0);}
+  else document.querySelectorAll('.ai').forEach(i=>i.classList.remove('open'));
+}
+init();
+</script>
+</body>
+</html>
