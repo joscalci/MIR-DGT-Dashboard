@@ -252,6 +252,66 @@ body.pres .toolbar{padding:20px 64px 0;}
 body.pres footer{padding:28px 64px;}
 
 @media(max-width:900px){.kpis,.g3,.ds-grid,.radar-row{grid-template-columns:1fr;}h1{font-size:32px;}.hero,.content,.toolbar,footer,.hero-strip{padding-left:24px;padding-right:24px;}}
+
+/* ── DATASET MODAL ── */
+.ds-modal-overlay{display:none;position:fixed;inset:0;background:rgba(11,15,26,.6);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.ds-modal-overlay.open{display:flex;}
+.ds-modal{background:var(--w);border-radius:20px;padding:28px 32px;max-width:580px;width:90%;box-shadow:0 24px 80px rgba(11,15,26,.3);position:relative;animation:modalIn .2s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.ds-modal-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;border:none;background:var(--paper3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--na);}
+.ds-modal-close:hover{background:var(--paper2);}
+.ds-modal-tag{display:inline-flex;align-items:center;gap:5px;background:var(--okl);color:var(--ok);border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;margin-bottom:14px;border:1px solid rgba(22,163,74,.2);}
+.ds-modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);margin-bottom:6px;line-height:1.2;}
+.ds-modal-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--na);margin-bottom:16px;}
+.ds-modal-desc{font-size:12px;color:var(--ink);line-height:1.75;margin-bottom:18px;padding:14px;background:var(--paper);border-radius:10px;}
+.ds-modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.ds-meta-item{background:var(--paper);border-radius:8px;padding:10px 12px;}
+.ds-meta-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--na);margin-bottom:3px;}
+.ds-meta-val{font-size:12px;color:var(--ink);font-weight:500;}
+.ds-modal-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px;}
+.ds-tag{font-size:10px;padding:2px 8px;background:var(--accl);color:var(--acc);border-radius:100px;font-weight:600;}
+.ds-modal-footer{display:flex;justify-content:flex-end;}
+.ds-btn-doc{font-size:11px;font-weight:600;padding:8px 16px;border-radius:8px;background:var(--ink);color:#fff;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.ds-btn-doc:hover{background:var(--ink2);}
+.dsc{cursor:pointer;}
+.dsc:hover .dsn{color:var(--acc);}
+/* ── RISK BLOCK ── */
+.risk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.risk-kpi{background:var(--w);border:1px solid var(--paper3);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);text-align:center;}
+.risk-kpi-val{font-family:'DM Serif Display',serif;font-size:44px;line-height:1;margin-bottom:4px;}
+.risk-kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--na);}
+.risk-kpi-sub{font-size:10px;color:var(--na);margin-top:3px;}
+.risk-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
+.risk-tab{font-size:11px;font-weight:600;padding:8px 16px;border-radius:8px;border:1.5px solid var(--paper3);background:var(--w);cursor:pointer;transition:all .15s;color:var(--ink);}
+.risk-tab:hover{border-color:var(--acc);color:var(--acc);}
+.risk-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.risk-panel{display:none;}
+.risk-panel.active{display:block;}
+.risk-panel-inner{background:var(--paper);border-radius:var(--r);padding:20px 22px;}
+.risk-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.risk-panel-title{font-size:14px;font-weight:700;color:var(--ink);}
+.risk-panel-total{font-family:'DM Mono',monospace;font-size:11px;color:var(--na);background:var(--paper3);padding:3px 10px;border-radius:100px;}
+.risk-bars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.risk-bar-group{background:var(--w);border-radius:10px;padding:14px 16px;}
+.risk-bar-group-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--na);margin-bottom:10px;}
+.risk-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.risk-bar-lbl{font-size:10px;color:var(--ink);min-width:56px;}
+.risk-bar-track{flex:1;height:7px;border-radius:4px;background:var(--paper2);overflow:hidden;}
+.risk-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+.risk-bar-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;min-width:14px;text-align:right;}
+.risk-treat{display:flex;gap:8px;margin-bottom:18px;}
+.risk-treat-pill{flex:1;text-align:center;padding:10px 8px;border-radius:8px;}
+.risk-treat-val{font-family:'DM Serif Display',serif;font-size:22px;display:block;margin-bottom:2px;}
+.risk-treat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.risk-highlights-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--na);margin-bottom:10px;}
+.risk-highlight-card{background:var(--w);border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:3px solid var(--acc);}
+.risk-hl-code{font-family:'DM Mono',monospace;font-size:9px;color:var(--acc);margin-bottom:4px;}
+.risk-hl-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.risk-hl-levels{display:flex;gap:12px;margin-bottom:5px;}
+.risk-hl-ini{font-size:10px;color:var(--ko);}
+.risk-hl-res{font-size:10px;color:var(--ok);}
+.risk-hl-action{font-size:10px;color:var(--na);border-top:1px solid var(--paper3);padding-top:5px;margin-top:5px;}
+#barChart{cursor:pointer;}
 </style>
 </head>
 <body>
@@ -394,11 +454,38 @@ body.pres footer{padding:28px 64px;}
   </div>
 </div>
 
+
+<div class="sec">Gestión de Riesgos <span>· 79 riesgos identificados · Haz clic en cada bloque temático</span></div>
+<div class="card" style="margin-bottom:14px;">
+  <div class="ct">Registro de riesgos MIR-DGT · Clasificación inicial → residual post-tratamiento</div>
+  <div class="risk-kpis">
+    <div class="risk-kpi"><div class="risk-kpi-val" style="background:linear-gradient(135deg,var(--acc),#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">79</div><div class="risk-kpi-lbl">Riesgos identificados</div><div class="risk-kpi-sub">en 6 bloques temáticos</div></div>
+    <div class="risk-kpi"><div class="risk-kpi-val" style="color:var(--ok);">0</div><div class="risk-kpi-lbl">Extremos/Muy altos residuales</div><div class="risk-kpi-sub">de 19 iniciales → todos mitigados</div></div>
+    <div class="risk-kpi"><div class="risk-kpi-val" style="color:var(--acc);">67%</div><div class="risk-kpi-lbl">Tratamiento MITIGAR</div><div class="risk-kpi-sub">53 de 79 riesgos</div></div>
+  </div>
+  <div class="risk-tabs" id="riskTabs"></div>
+  <div id="riskPanels"></div>
+</div>
+
 <!-- ACCORDION -->
 <div class="sec">Detalle por bloque <span>↓ Clic para expandir · ✓ Marca actividades completadas</span><div class="sec-line"></div></div>
 <div class="acc" id="acc"></div>
 
 </div><!-- end .content -->
+
+
+<div class="ds-modal-overlay" id="dsModalOverlay" onclick="closeDsModal(event)">
+  <div class="ds-modal" id="dsModal">
+    <button class="ds-modal-close" onclick="closeDsModal()">✕</button>
+    <div class="ds-modal-tag">✓ Federado · datos.gob.es</div>
+    <div class="ds-modal-title" id="dsModalTitle"></div>
+    <div class="ds-modal-id" id="dsModalId"></div>
+    <div class="ds-modal-desc" id="dsModalDesc"></div>
+    <div class="ds-modal-meta" id="dsModalMeta"></div>
+    <div class="ds-modal-tags" id="dsModalTags"></div>
+    <div class="ds-modal-footer" id="dsModalFooter"></div>
+  </div>
+</div>
 
 <footer>
   <div class="fl"><strong>Impulsa Data / GDDP PRTR · MIR-DGT</strong><br>Ministerio del Interior · Dirección General de Tráfico · DGDATO</div>
@@ -413,7 +500,7 @@ body.pres footer{padding:28px 64px;}
 // ════════════════════════════════════════════════
 const DATA=[
   // B0
-  {b:"B0",n:"Kick-off",a:"0.0. Actividades iniciales y reunión de Kick-off",e:[{n:"MIR-DGT.PP-Presentación Kick Off.pptx",u:""}],svc:"",s:"N/A"},
+  {b:"B0",n:"Kick-off",a:"0.0. Actividades iniciales y reunión de Kick-off",e:[{n:"MIR-DGT.PP-Presentación Kick Off.pptx",u:"https://colaboraage.sharepoint.com/:p:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/1.Inicio/MIR-DGT.PP-Presentaci%C3%B3n%20Kick%20Off.pptx?d=wc86b9b12bff94ea3a1da77a2616917c0&csf=1&web=1&e=lkR2aW"}],svc:"",s:"OK"},
   // B1
   {b:"B1",n:"Análisis AS IS",a:"1.0. Revisión y validación del escenario propuesto de arquitecturas",e:[
     {n:"MIR-DGT.IN-Informe de Arquitectura e Implantación.docx",u:"https://colaboraage.sharepoint.com/:u:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B1.%20An%C3%A1lisis%20AS%20IS/A%201.0%20Arquitectura/MIR-DGT.IN-Informe%20de%20Arquitectura%20e%20Implantaci%C3%B3n.docx.url?csf=1&web=1&e=opuaHT"},
@@ -441,7 +528,7 @@ const DATA=[
   {b:"B1",n:"Análisis AS IS",a:"1.6. Análisis Benchmarking oficinas homólogas a nivel mundial",e:[{n:"NA",u:""}],svc:"",s:"N/A"},
   // B2
   {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.0. Definir estrategias del dato y planes de acción",e:[
-    {n:"MIR-DGT.IN-Informe implementación estrategia.docx",u:""},
+    {n:"MIR-DGT.IN-Informe implementación estrategia.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.1%20Gobierno%20DataSet/MIR-DGT.IN-Informe%20implementaci%C3%B3n%20estrategia.docx?d=w9d3834990d8b4c45a925a887e7fb42bb&csf=1&web=1&e=3u6y6h"},
     {n:"MIR-DGT.IN-Estrategia Dato.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B2.%20Dise%C3%B1o%20y%20Modelo%20de%20Gobierno%20de%20Datos/A%202.0%20Estrategias/MIR-DGT.IN-Estrategia%20Dato.xlsx?d=w68423abc404c4df087002820d60c2fcf&csf=1&web=1&e=zCYHwY"},
   ],svc:"S02",s:"OK"},
   {b:"B2",n:"Diseño y Modelo de Gobierno de Datos",a:"2.1. Diseñar el modelo de gobernanza sobre los conjuntos de datos",e:[
@@ -608,7 +695,7 @@ const DATA=[
     {n:"MIR-DGT.IN-Informe Puesta Disposición Distribuciones.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.IN-Informe%20Puesta%20Disposici%C3%B3n%20Distribuciones.docx?d=wece4c6dbaa88459982d51ae94017ac49&csf=1&web=1&e=tKWTvD"},
     {n:"MIR-DGT.IN-Requerimientos Catálogos AGE-MIR-DGT.docx",u:"https://colaboraage.sharepoint.com/:w:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.IN-Requerimientos%20Cat%C3%A1logos%20AGE-MIR-DGT.docx?d=wee10c8fa394d4c2f8c67fb3874d1e9fc&csf=1&web=1&e=6uXYsz"},
     {n:"MIR-DGT.NM-Puesta Disposición Distribuciones.xlsx",u:"https://colaboraage.sharepoint.com/:x:/r/sites/DIGITAL-GestindelaDemandadelDatoPblico/Documentos%20compartidos/Proyecto/10%20Casos%20de%20Uso/10.02%20Proyectos/MIR-DGT/2.Ejecuci%C3%B3n/B4.%20Dise%C3%B1o%20de%20Cat%C3%A1logo%20y%20Plataforma%20de%20Datos/A%204.7%20%20Publicaci%C3%B3n%20cat%C3%A1logo/MIR-DGT.NM-Puesta%20Disposici%C3%B3n%20Distribuciones.xlsx?d=w1d57d3564324491a84324ad58358b312&csf=1&web=1&e=1rVhP6"},
-  ],svc:"S08",s:"KO"},
+  ],svc:"S08",s:"OK"},
   {b:"B4",n:"Diseño de Catálogo y Plataforma",a:"4.8. Análisis de la integración del catálogo con herramientas de visualización",e:[{n:"NA",u:""}],svc:"",s:"N/A"},
   // B5
   {b:"B5",n:"Federación con Catálogo AGE",a:"5.1. Definir los procesos de federación del catálogo del Organismo con la AGE",e:[
@@ -916,6 +1003,7 @@ function init(){
     const card=document.createElement('div');card.className='dsc';
     card.innerHTML=`<div class="dsh"><div class="dsi" style="background:${ds.bg}">${ds.icon}</div><div><div class="dsn">${ds.name}</div><div class="dsid">${ds.id}</div></div><div class="dsfed">✓ Federado</div></div>
     <div class="pipe">${ds.phases.map(p=>`<div class="ps"><div class="pd">✓</div><div class="pl">${p}</div></div>`).join('')}</div>`;
+    card.addEventListener('click',function(){openDsModal(ds.id);});
     dg.appendChild(card);
   });
 
@@ -1014,7 +1102,165 @@ function togglePres(on){
   if(on){document.querySelectorAll('.ai').forEach(i=>i.classList.add('open'));window.scrollTo(0,0);}
   else document.querySelectorAll('.ai').forEach(i=>i.classList.remove('open'));
 }
+
+// ════ DATASET INFO ════
+const DATASET_INFO={
+  "SINI:000001":{
+    name:"Microdatos Accidentes con Víctimas 2024",
+    resp:"Observatorio Nacional de Seguridad Vial (ONSV)",
+    period:"01/01/2024 – 31/12/2024",
+    freq:"Anual",format:"XLSX",volume:"25,3 MB",
+    desc:"Contiene información de los accidentes con víctimas ocurridos en vías urbanas e interurbanas en España en 2024. Cada línea corresponde a un accidente. Incluye identificación, temporalidad, localización territorial, contexto vial, tipología, severidad, vehículos implicados y condiciones ambientales.",
+    tags:["Accidente","Víctimas","Seguridad Vial","Tráfico","Microdato"],
+    docurl:"https://www.dgt.es/export/sites/web-DGT/.galleries/downloads/dgt-en-cifras/24h/Diccionario_Tabla_Accidentes.xlsx"
+  },
+  "PARQUE:000001/000002":{
+    name:"Microdatos Parque de Vehículos (Anual y Mensual)",
+    resp:"Observatorio Nacional de Seguridad Vial (ONSV)",
+    period:"31/12/2020 – Actualidad",
+    freq:"Anual y Mensual",format:"ZIP/TXT",volume:"38,6M registros",
+    desc:"Datos de vehículos activos a nivel estatal y provincial. Incluye identificación, fechas de matriculación, clasificación, características técnicas, propulsión y tecnología energética, emisiones y eficiencia ambiental, situación administrativa y titularidad del vehículo.",
+    tags:["Vehículo","Parque","Matriculación","Propulsión","Emisiones"],
+    docurl:"https://www.dgt.es/export/sites/web-DGT/.galleries/downloads/dgt-en-cifras/matraba/Interfaz-de-Salida-Fichero-Parque-Anual.pdf"
+  },
+  "AMBI:000001":{
+    name:"Microdatos Distintivo Ambiental de Vehículos",
+    resp:"Subdirección Adjunta de Vehículos",
+    period:"01/01/2019 – Actualidad",
+    freq:"Diario",format:"ZIP",volume:"592 MB · 38M registros",
+    desc:"Fichero diario con la clasificación medioambiental del parque de vehículos. Contiene MATRÍCULA y TIPO DE ETIQUETA (0 Emisiones, ECO, C, B o sin distintivo). Permite análisis de políticas de movilidad sostenible y zonas de bajas emisiones.",
+    tags:["Distintivo Ambiental","Matrícula","Movilidad","Medioambiente"],
+    docurl:""
+  },
+  "MATRABA series":{
+    name:"Microdatos MATRABA – Altas, Transferencias y Bajas",
+    resp:"Subdirección Adjunta de Vehículos",
+    period:"01/12/2014 – Actualidad",
+    freq:"Mensual y Diario",format:"ZIP/TXT",volume:"Variable por fichero",
+    desc:"Serie de microdatos del Registro de Vehículos: Matriculaciones (altas), Transferencias (cambios de titularidad) y Bajas. Disponible en periodicidad mensual y diaria. Desde feb-2025 el bastidor está enmascarado. Incluye características técnicas, propulsión, clasificación y localización territorial.",
+    tags:["MATRABA","Matriculaciones","Transferencias","Bajas","Bastidor"],
+    docurl:"https://www.dgt.es/export/sites/web-DGT/.galleries/downloads/dgt-en-cifras/matraba/MATRICULACIONES_MATRABA.pdf"
+  }
+};
+
+// ════ RISK BLOCKS ════
+const RISK_BLOCKS=[
+  {id:"B1",name:"Calidad y metadatos",total:22,ini:{extremo:0,muyalto:1,alto:13,medio:7,bajo:1},res:{extremo:0,muyalto:0,alto:4,medio:15,bajo:3},mitigar:20,evitar:1,aceptar:1,
+   highlights:[
+    {code:"RI-B1.17",title:"Falta arquitectura de metadatos",ini:"Muy alto (16)",res:"Bajo (4)",action:"Modelo DCAT-AP-ES implementado · Fichas M4M completadas"},
+    {code:"RI-B1.20",title:"Sin catálogo de datos",ini:"Alto (12)",res:"Bajo (3)",action:"CKAN implantado + federación datos.gob.es completada"}
+  ]},
+  {id:"B2",name:"Seguridad y privacidad",total:16,ini:{extremo:0,muyalto:4,alto:7,medio:3,bajo:2},res:{extremo:0,muyalto:0,alto:2,medio:5,bajo:9},mitigar:8,evitar:3,aceptar:5,
+   highlights:[
+    {code:"RI-B2.01",title:"Datos personales/sensibles sin identificar",ini:"Muy alto (16)",res:"Medio (8)",action:"Análisis PET aplicado · 4 informes · Revisión DPD"},
+    {code:"RI-B2.08",title:"Sin análisis de impacto PIA",ini:"Muy alto (15)",res:"Bajo (4)",action:"Anonimización + PIA formal · Control acceso masivo"}
+  ]},
+  {id:"B3",name:"Cumplimiento normativo",total:10,ini:{extremo:0,muyalto:3,alto:5,medio:2,bajo:0},res:{extremo:0,muyalto:0,alto:4,medio:4,bajo:2},mitigar:7,evitar:2,aceptar:1,
+   highlights:[
+    {code:"RI-B3.06",title:"Metadatos DCAT-AP-ES sin validar",ini:"Muy alto (15)",res:"Medio (8)",action:"Validación SHACL implementada · Fichas M4M completadas"},
+    {code:"RI-B3.03",title:"Publicación sin licencia clara",ini:"Alto (10)",res:"Bajo (4)",action:"Licencia CC BY 4.0 asignada a todos los datasets"}
+  ]},
+  {id:"B4",name:"Organizacional y cultural",total:11,ini:{extremo:1,muyalto:2,alto:8,medio:0,bajo:0},res:{extremo:0,muyalto:0,alto:4,medio:6,bajo:1},mitigar:8,evitar:2,aceptar:1,
+   highlights:[
+    {code:"RI-B4.05",title:"Sin formación en gobierno del dato",ini:"Extremo (20)",res:"Alto (12) · Pendiente",action:"Plan capacitación urgente antes 31/05/2026"},
+    {code:"RI-B4.01",title:"Sin estructura formal de gobierno",ini:"Alto (12)",res:"Medio (8)",action:"Modelo RACIV + 10 procesos MGMD documentados"}
+  ]},
+  {id:"B5",name:"Interoperabilidad",total:13,ini:{extremo:0,muyalto:6,alto:5,medio:2,bajo:0},res:{extremo:0,muyalto:0,alto:7,medio:4,bajo:2},mitigar:5,evitar:5,aceptar:3,
+   highlights:[
+    {code:"RI-B5.04",title:"Desalineación semántica entre sistemas",ini:"Muy alto (15)",res:"Medio (8)",action:"Scripts ETL Python · Flujo Teradata → AGE operativo"},
+    {code:"RI-B5.02",title:"Integración difícil con CKAN",ini:"Muy alto (15)",res:"Medio (8)",action:"CKAN implantado · POC E2E validada en preproducción"}
+  ]},
+  {id:"B6",name:"Alcance y plazos",total:10,ini:{extremo:0,muyalto:0,alto:4,medio:3,bajo:3},res:{extremo:0,muyalto:0,alto:2,medio:3,bajo:5},mitigar:5,evitar:0,aceptar:5,
+   highlights:[
+    {code:"RI-B6.09",title:"Plazos ajustados + dependencias bloqueantes",ini:"Alto (12)",res:"Medio (8) · Activo",action:"Script dump/restauración MIR · Monitorización diaria"},
+    {code:"RI-B6.03",title:"Dependencias externas no contempladas",ini:"Alto (12)",res:"Medio (8)",action:"Seguimiento semanal · Escalado definido"}
+  ]}
+];
+
+// ════ DATASET MODAL ════
+function openDsModal(dsId){
+  const info=DATASET_INFO[dsId];if(!info)return;
+  document.getElementById('dsModalTitle').textContent=info.name;
+  document.getElementById('dsModalId').textContent=dsId+' · '+info.format+' · '+info.volume;
+  document.getElementById('dsModalDesc').textContent=info.desc;
+  document.getElementById('dsModalMeta').innerHTML=
+    '<div class="ds-meta-item"><div class="ds-meta-lbl">Responsable</div><div class="ds-meta-val">'+info.resp+'</div></div>'+
+    '<div class="ds-meta-item"><div class="ds-meta-lbl">Cobertura temporal</div><div class="ds-meta-val">'+info.period+'</div></div>'+
+    '<div class="ds-meta-item"><div class="ds-meta-lbl">Frecuencia</div><div class="ds-meta-val">'+info.freq+'</div></div>'+
+    '<div class="ds-meta-item"><div class="ds-meta-lbl">Formato · Volumen</div><div class="ds-meta-val">'+info.format+' · '+info.volume+'</div></div>';
+  document.getElementById('dsModalTags').innerHTML=info.tags.map(t=>'<span class="ds-tag">'+t+'</span>').join('');
+  document.getElementById('dsModalFooter').innerHTML=info.docurl
+    ?'<a class="ds-btn-doc" href="'+info.docurl+'" target="_blank">📄 Ver documentación técnica</a>'
+    :'<span style="font-size:11px;color:var(--na);">Sin documentación técnica disponible</span>';
+  document.getElementById('dsModalOverlay').classList.add('open');
+}
+function closeDsModal(e){
+  if(!e||e.target===document.getElementById('dsModalOverlay')||e.currentTarget===e.target){
+    document.getElementById('dsModalOverlay').classList.remove('open');
+  }
+}
+
+// ════ RISKS INIT ════
+function initRisks(){
+  const tabs=document.getElementById('riskTabs');
+  const panels=document.getElementById('riskPanels');
+  if(!tabs||!panels)return;
+  const lvlColors={extremo:'#7f1d1d',muyalto:'#dc2626',alto:'#ea580c',medio:'#d97706',bajo:'#16a34a'};
+  const lvlLabels={extremo:'Extremo',muyalto:'Muy alto',alto:'Alto',medio:'Medio',bajo:'Bajo'};
+  const lvlKeys=['extremo','muyalto','alto','medio','bajo'];
+  RISK_BLOCKS.forEach(function(blk,i){
+    const tab=document.createElement('button');
+    tab.className='risk-tab'+(i===0?' active':'');
+    tab.textContent=blk.name;
+    tab.onclick=function(){
+      document.querySelectorAll('.risk-tab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.risk-panel').forEach(function(p){p.classList.remove('active');});
+      tab.classList.add('active');
+      document.getElementById('risk-panel-'+blk.id).classList.add('active');
+    };
+    tabs.appendChild(tab);
+    const maxAll=Math.max.apply(null,lvlKeys.map(function(k){return Math.max(blk.ini[k]||0,blk.res[k]||0);}));
+    const barsIni=lvlKeys.filter(function(k){return blk.ini[k]>0;}).map(function(k){
+      return '<div class="risk-bar-row"><div class="risk-bar-lbl">'+lvlLabels[k]+'</div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:'+Math.round((blk.ini[k]||0)/Math.max(maxAll,1)*100)+'%;background:'+lvlColors[k]+';"></div></div><div class="risk-bar-num" style="color:'+lvlColors[k]+';">'+(blk.ini[k]||0)+'</div></div>';
+    }).join('');
+    const barsRes=lvlKeys.filter(function(k){return blk.res[k]>0;}).map(function(k){
+      return '<div class="risk-bar-row"><div class="risk-bar-lbl">'+lvlLabels[k]+'</div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:'+Math.round((blk.res[k]||0)/Math.max(maxAll,1)*100)+'%;background:'+lvlColors[k]+';opacity:.75;"></div></div><div class="risk-bar-num" style="color:'+lvlColors[k]+';">'+(blk.res[k]||0)+'</div></div>';
+    }).join('');
+    const highlights=blk.highlights.map(function(h){
+      return '<div class="risk-highlight-card"><div class="risk-hl-code">'+h.code+'</div><div class="risk-hl-title">'+h.title+'</div><div class="risk-hl-levels"><span class="risk-hl-ini">Inicial: '+h.ini+'</span><span style="color:var(--na);margin:0 4px;">→</span><span class="risk-hl-res">Residual: '+h.res+'</span></div><div class="risk-hl-action">✓ '+h.action+'</div></div>';
+    }).join('');
+    const panel=document.createElement('div');
+    panel.className='risk-panel'+(i===0?' active':'');
+    panel.id='risk-panel-'+blk.id;
+    panel.innerHTML='<div class="risk-panel-inner"><div class="risk-panel-header"><div class="risk-panel-title">'+blk.name+'</div><div class="risk-panel-total">'+blk.total+' riesgos</div></div><div class="risk-bars"><div class="risk-bar-group"><div class="risk-bar-group-title">Clasificación inicial</div>'+barsIni+'</div><div class="risk-bar-group"><div class="risk-bar-group-title">Clasificación residual</div>'+barsRes+'</div></div><div class="risk-treat"><div class="risk-treat-pill" style="background:#fef3c7;"><span class="risk-treat-val" style="color:#d97706;">'+blk.mitigar+'</span><span class="risk-treat-lbl" style="color:#d97706;">MITIGAR</span></div><div class="risk-treat-pill" style="background:#fee2e2;"><span class="risk-treat-val" style="color:#dc2626;">'+blk.evitar+'</span><span class="risk-treat-lbl" style="color:#dc2626;">EVITAR</span></div><div class="risk-treat-pill" style="background:#dcfce7;"><span class="risk-treat-val" style="color:#16a34a;">'+blk.aceptar+'</span><span class="risk-treat-lbl" style="color:#16a34a;">ACEPTAR</span></div></div><div class="risk-highlights-title">Riesgos críticos destacados</div>'+highlights+'</div>';
+    panels.appendChild(panel);
+  });
+}
+
+// ════ BAR CHART CLICK ════
+function setupBarChartClick(){
+  const cv=document.getElementById('barChart');
+  if(!cv)return;
+  cv.addEventListener('click',function(e){
+    const rect=cv.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)*(cv.width/rect.width);
+    const map=byBlock();const blocks=Object.keys(map);
+    const W=cv.width,pad=20,gap=6;
+    const bw=Math.floor((W-pad*2-gap*(blocks.length-1))/blocks.length);
+    blocks.forEach(function(b,i){
+      const x=pad+i*(bw+gap);
+      if(mx>=x&&mx<=x+bw){
+        const el=document.getElementById('bl-'+b);
+        if(el){el.classList.add('open');setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+      }
+    });
+  });
+}
+
 init();
+initRisks();
+setupBarChartClick();
 </script>
 </body>
 </html>
+
